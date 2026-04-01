@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Studio Zen-Node</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .blog-post {
+            line-height: 1.8;
+            color: #ddd;
+        }
+        .blog-post h1 { color: #007bff; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        .blog-post h2 { color: #fff; margin-top: 2rem; }
+        .blog-post code { background: #222; padding: 2px 5px; border-radius: 4px; color: #ff79c6; }
+        .blog-post pre { background: #111; padding: 15px; border-radius: 8px; overflow-x: auto; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <nav class="nav-container">
+        <div class="logo">Studio Zen-Node</div>
+        <div class="menu-content">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="works.html">Works</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="env.html">Environment</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="blog.html" class="back-link">← Blog List</a>
+        
+        <article id="content" class="card blog-post">
+            <p>Loading post...</p>
+        </article>
+    </div>
+
+    <script>
+        // URLパラメータからファイル名を取得 (例: blog.html?p=post01)
+        const urlParams = new URLSearchParams(window.location.search);
+        const postName = urlParams.get('p') || 'index'; // デフォルトは index.md
+
+        async function loadPost() {
+            const contentDiv = document.getElementById('content');
+            try {
+                // posts フォルダ内の .md ファイルを読みに行く
+                const response = await fetch(`posts/${postName}.md`);
+                if (!response.ok) throw new Error('Post not found');
+                
+                const mdText = await response.text();
+                // マークダウンをHTMLに変換して表示
+                contentDiv.innerHTML = marked.parse(mdText);
+            } catch (err) {
+                contentDiv.innerHTML = `<h2>404 Not Found</h2><p>記事が見つかりませんでした。</p>`;
+            }
+        }
+
+        loadPost();
+    </script>
+
+    <div class="footer">&copy; 2026 Studio Zen-Node</div>
+</body>
+</html>
