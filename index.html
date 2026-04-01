@@ -6,6 +6,69 @@
     <title>Studio Zen-Node | Official Site</title>
     <meta name="description" content="長野を拠点に活動する映像制作ブランド Studio Zen-Node。高品質な動画編集とビジュアルエンジニアリング。">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ローディング画面の強制中央揃え設定 */
+        #loader {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loader-content {
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .loader-logo {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 2px;
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #007bff;
+            box-shadow: 0 0 15px #007bff;
+        }
+
+        .loader-status {
+            color: #444;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
+
+        #percent { color: #007bff; }
+
+        /* 完了時に消去するクラス */
+        .loaded {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -35,7 +98,7 @@
 
     <div class="container">
         <header style="text-align:center; padding: 6rem 0 4rem 0;">
-            <h1 style="font-size: clamp(2rem, 10vw, 4rem); color:#007bff; margin:0; font-weight:900; letter-spacing: 5px;">
+            <h1 style="font-size: clamp(2.5rem, 10vw, 4.5rem); color:#007bff; margin:0; font-weight:900; letter-spacing: 5px;">
                 Studio Zen-Node
             </h1>
             <p style="letter-spacing:5px; color:#888; text-transform: uppercase; font-size: 0.9rem; margin-top: 10px;">
@@ -68,16 +131,19 @@
             const interval = setInterval(function() {
                 if (width >= 100) {
                     clearInterval(interval);
+                    // 100%になったら確実に消去
                     setTimeout(() => {
                         loader.classList.add('loaded');
-                    }, 500);
+                    }, 300);
                 } else {
-                    width += Math.floor(Math.random() * 15) + 1;
+                    // プログレスバーを進める
+                    width += Math.floor(Math.random() * 15) + 2;
                     if (width > 100) width = 100;
-                    bar.style.width = width + '%';
-                    percent.innerText = width + '%';
+                    
+                    if(bar) bar.style.width = width + '%';
+                    if(percent) percent.innerText = width + '%';
                 }
-            }, 40);
+            }, 50);
         });
     </script>
 
