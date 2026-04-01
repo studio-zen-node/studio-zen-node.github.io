@@ -53,19 +53,7 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <nav class="nav-container">
-        <div class="logo">Studio Zen-Node</div>
-        <input type="checkbox" id="menu-btn-check">
-        <label for="menu-btn-check" class="menu-btn"><span></span></label>
-        <div class="menu-content">
-            <ul>
-                <li><a href="index.html">Home<span>トップページ</span></a></li>
-                <li><a href="works.html">Works<span>制作実績</span></a></li>
-                <li><a href="service.html">Service<span>ご依頼・料金</span></a></li>
-                <li><a href="env.html">Environment<span>制作環境</span></a></li>
-            </ul>
-        </div>
-    </nav>
+    <script src="menu.js"></script>
 
     <div class="container">
         <h1 style="color:#007bff; font-weight: 900;">Works</h1>
@@ -73,17 +61,17 @@
 
         <section class="card">
             <span class="tech-badge">Video Production</span>
-            <h2>中学校 三送会 プロジェクト映像</h2>
+            <h2>中学校「三年生の発表」記念映像</h2>
             
             <div class="work-image-container">
-                <img src="images/sansokai_timeline.png" alt="三送会編集タイムライン" class="work-image">
+                <img src="images/sansokai_timeline.png" alt="編集タイムライン" class="work-image">
                 <p class="work-caption">Actual Editing Timeline in PowerDirector 2025</p>
             </div>
 
-            <p>卒業生に向けた記念映像。多数のマルチトラックを駆使し、BGMのビートに視覚効果を完全に同期させる「ピッチカット編集」を採用しました。</p>
+            <p>学年の節目となる「三年生の発表」において、ステージパフォーマンスや思い出のシーンを凝縮した記念映像。多数のマルチトラックを駆使し、視覚効果と音響効果を高度に融合させた編集を行いました。</p>
             
             <p style="font-size: 0.9rem; color: #aaa; border-left: 2px solid #333; padding-left: 15px; margin: 15px 0;">
-                素材選定から構成、音響調整まで一貫して担当。5分以上の長編ながら、緩急のある展開で没入感を高める工夫を施しています。
+                素材選定から構成、音響調整まで一貫して担当。5分以上の長編ながら、BGMのビートに視覚効果を完全に同期させる「ピッチカット編集」を採用し、没入感を高める工夫を施しています。
             </p>
 
             <ul class="list">
@@ -97,18 +85,16 @@
     <div class="footer">&copy; 2026 Studio Zen-Node</div>
 
     <script>
-        // 右クリック禁止
-        document.oncontextmenu = function() { return false; };
-        
-        // ドラッグ開始禁止
-        document.ondragstart = function() { return false; };
+        // セキュリティ：右クリックとドラッグ禁止
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
 
         // 特定のキー操作（保存・ソース表示）を制限
-        document.onkeydown = function(e) {
+        document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'u')) {
-                return false;
+                e.preventDefault();
             }
-        };
+        });
     </script>
 </body>
 </html>
