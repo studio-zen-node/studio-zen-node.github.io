@@ -20,3 +20,5 @@ document.addEventListener('DOMContentLoaded', function() {
     // bodyの先頭に挿入
     document.body.insertAdjacentHTML('afterbegin', navHTML);
 });
+
+
