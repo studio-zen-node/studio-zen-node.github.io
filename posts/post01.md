@@ -3,7 +3,7 @@
 Category: #Hardware #PowerDirector #LOQ
 
 ## はじめに
-高校入学を控え、メインマシンを Lenovo LOQ 15IRX9 に更新した。
+進学を控え、メインマシンを Lenovo LOQ 15IRX9 に更新した。
 これまで時間がかかっていたエンコードやプレビューがどう変わったかを記録する。
 
 ## スペックのおさらい
