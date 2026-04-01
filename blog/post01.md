@@ -19,5 +19,5 @@ Category: #Hardware #PowerDirector #LOQ
 ## 今後の展望
 進学先ではプログラミングも学ぶため、このパワーを開発にも活かしていきたい。
 
----
+----
 © 2026 Studio Zen-Node
