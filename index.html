@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Studio Zen-Node | Official Site</title>
+    <meta name="description" content="長野を拠点に活動する映像制作ブランド Studio Zen-Node。高品質な動画編集とビジュアルエンジニアリング。">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <div id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">Studio Zen-Node</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="bar"></div>
+            </div>
+            <div class="loader-status">SYSTEM LOADING... <span id="percent">0%</span></div>
+        </div>
+    </div>
+
     <nav class="nav-container">
         <div class="logo">Studio Zen-Node</div>
         <input type="checkbox" id="menu-btn-check">
@@ -22,18 +34,52 @@
     </nav>
 
     <div class="container">
-        <section style="text-align:center; padding: 4rem 0;">
-            <h1 style="font-size:3rem; color:#007bff; margin:0;">Studio Zen-Node</h1>
-            <p style="letter-spacing:3px;">Visual Engineering & Creation</p>
-        </section>
+        <header style="text-align:center; padding: 6rem 0 4rem 0;">
+            <h1 style="font-size: clamp(2rem, 10vw, 4rem); color:#007bff; margin:0; font-weight:900; letter-spacing: 5px;">
+                Studio Zen-Node
+            </h1>
+            <p style="letter-spacing:5px; color:#888; text-transform: uppercase; font-size: 0.9rem; margin-top: 10px;">
+                Visual Engineering & Creation
+            </p>
+        </header>
 
         <section class="card">
             <h2>Concept</h2>
             <p><strong>Produced by Studio Zen-Node</strong></p>
-            <p>長野を拠点に活動する学生クリエイターによる映像制作プロジェクト。情報工学の知識を活かし、高品質なビジュアルを創造します。</p>
+            <p>長野を拠点に活動する学生映像クリエイター。最新の編集技術と情報工学の視点を融合させ、視聴者の心に響く映像体験を構築します。</p>
+        </section>
+
+        <section style="text-align: center; margin-top: 3rem;">
+            <a href="works.html" class="btn-home">Explore Works</a>
         </section>
     </div>
 
-    <div class="footer">&copy; 2026 Studio Zen-Node</div>
+    <div class="footer">
+        &copy; 2026 Studio Zen-Node | All Rights Reserved.
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            const bar = document.getElementById('bar');
+            const percent = document.getElementById('percent');
+            const loader = document.getElementById('loader');
+            let width = 0;
+
+            const interval = setInterval(function() {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loader.classList.add('loaded');
+                    }, 500);
+                } else {
+                    width += Math.floor(Math.random() * 15) + 1;
+                    if (width > 100) width = 100;
+                    bar.style.width = width + '%';
+                    percent.innerText = width + '%';
+                }
+            }, 40);
+        });
+    </script>
+
 </body>
 </html>
