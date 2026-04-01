@@ -7,7 +7,7 @@
     <meta name="description" content="長野を拠点に活動する映像制作ブランド Studio Zen-Node。高品質な動画編集とビジュアルエンジニアリング。">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* ローディング画面の強制中央揃え設定 */
+        /* ローディング画面の設定 */
         #loader {
             position: fixed;
             width: 100vw;
@@ -22,55 +22,35 @@
             align-items: center;
             transition: opacity 0.8s ease, visibility 0.8s ease;
         }
-
-        .loader-content {
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .loader-logo {
-            color: #fff;
-            font-size: 1.2rem;
-            font-weight: 900;
-            letter-spacing: 6px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 2px;
-            background: #222;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 15px;
-        }
-
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: #007bff;
-            box-shadow: 0 0 15px #007bff;
-        }
-
-        .loader-status {
-            color: #444;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            font-family: monospace;
-        }
-
+        .loader-content { width: 80%; max-width: 400px; text-align: center; }
+        .loader-logo { color: #fff; font-size: 1.2rem; font-weight: 900; letter-spacing: 6px; margin-bottom: 20px; text-transform: uppercase; }
+        .progress-container { width: 100%; height: 2px; background: #222; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
+        .progress-bar { width: 0%; height: 100%; background: #007bff; box-shadow: 0 0 15px #007bff; }
+        .loader-status { color: #444; font-size: 0.7rem; letter-spacing: 2px; font-family: monospace; }
         #percent { color: #007bff; }
+        .loaded { opacity: 0 !important; visibility: hidden !important; }
 
-        /* 完了時に消去するクラス */
-        .loaded {
-            opacity: 0 !important;
-            visibility: hidden !important;
+        /* ホーム専用の追加スタイル */
+        .btn-home {
+            display: inline-block;
+            padding: 15px 40px;
+            background: transparent;
+            color: #007bff;
+            border: 1px solid #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            margin: 10px;
+        }
+        .btn-home:hover {
+            background: #007bff;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
         }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <div id="loader">
         <div class="loader-content">
@@ -82,19 +62,7 @@
         </div>
     </div>
 
-    <nav class="nav-container">
-        <div class="logo">Studio Zen-Node</div>
-        <input type="checkbox" id="menu-btn-check">
-        <label for="menu-btn-check" class="menu-btn"><span></span></label>
-        <div class="menu-content">
-            <ul>
-                <li><a href="index.html">Home<span>トップページ</span></a></li>
-                <li><a href="works.html">Works<span>制作実績</span></a></li>
-                <li><a href="service.html">Service<span>ご依頼・料金</span></a></li>
-                <li><a href="env.html">Environment<span>制作環境</span></a></li>
-            </ul>
-        </div>
-    </nav>
+    <script src="menu.js"></script>
 
     <div class="container">
         <header style="text-align:center; padding: 6rem 0 4rem 0;">
@@ -110,10 +78,18 @@
             <h2>Concept</h2>
             <p><strong>Produced by Studio Zen-Node</strong></p>
             <p>長野を拠点に活動する学生映像クリエイター。最新の編集技術と情報工学の視点を融合させ、視聴者の心に響く映像体験を構築します。</p>
+            <p>イベント映像、記念ムービー、モーショングラフィックスを中心に、企画から完パケまで一貫したクオリティを提供します。</p>
+        </section>
+
+        <section class="card" style="border-top: 1px solid #333;">
+            <h3 style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">LATEST UPDATE</h3>
+            <p style="font-size: 1.1rem;">映像制作の裏側や技術解説をBlogにて公開中。</p>
+            <a href="blog.html" style="color: #007bff; text-decoration: none; font-size: 0.9rem;">→ View Blog Posts</a>
         </section>
 
         <section style="text-align: center; margin-top: 3rem;">
             <a href="works.html" class="btn-home">Explore Works</a>
+            <a href="service.html" class="btn-home">Service / Contact</a>
         </section>
     </div>
 
@@ -122,6 +98,7 @@
     </div>
 
     <script>
+        // ローディングアニメーション制御
         window.addEventListener('load', function() {
             const bar = document.getElementById('bar');
             const percent = document.getElementById('percent');
@@ -131,20 +108,21 @@
             const interval = setInterval(function() {
                 if (width >= 100) {
                     clearInterval(interval);
-                    // 100%になったら確実に消去
                     setTimeout(() => {
                         loader.classList.add('loaded');
                     }, 300);
                 } else {
-                    // プログレスバーを進める
                     width += Math.floor(Math.random() * 15) + 2;
                     if (width > 100) width = 100;
-                    
                     if(bar) bar.style.width = width + '%';
                     if(percent) percent.innerText = width + '%';
                 }
             }, 50);
         });
+
+        // セキュリティ：右クリックとドラッグ禁止
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
     </script>
 
 </body>
