@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | Studio Zen-Node</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        /* フォーム専用追加スタイル */
+        .contact-card { max-width: 600px; margin: 40px auto; padding: 40px 20px; text-align: center; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 8px; margin-left: 5px; }
+        
+        .auth-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: #0a0a0a;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+        .auth-input:focus { border-color: #007bff; box-shadow: 0 0 10px rgba(0, 123, 255, 0.2); }
+        
+        textarea.auth-input { resize: none; line-height: 1.6; }
+        
+        select.auth-input {
+            appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+        }
+
+        .auth-submit {
+            width: 100%;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .auth-submit:hover { background: #0056b3; transform: translateY(-2px); }
+        .auth-submit:disabled { background: #333; cursor: not-allowed; transform: none; }
+
+        /* 完了画面用 */
+        #success-container { display: none; padding: 40px 10px; }
+        .copy-info-btn { background: #333; margin-top: 20px; }
+        
+        /* ローディング */
+        .loader {
+            display: none;
+            border: 3px solid #1a1a1a;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <script src="menu.js"></script>
+
+    <div class="container">
+        <article class="card contact-card">
+            
+            <div id="form-container">
+                <h2 style="margin-bottom: 10px;">Order & Estimate</h2>
+                <p style="color:#666; font-size:0.9rem; margin-bottom:30px;">制作のご依頼・お見積もりはこちらから</p>
+                
+                <form id="order-form">
+                    <div class="form-group">
+                        <label class="form-label">お名前 / 組織名</label>
+                        <input type="text" id="name" placeholder="例：長野 太郎" required class="auth-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">メールアドレス</label>
+                        <input type="email" id="email" placeholder="example@mail.com" required class="auth-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ご依頼の種類</label>
+                        <select id="type" class="auth-input">
+                            <option value="動画制作 (YouTube/Vlog)">動画制作 (YouTube/Vlog)</option>
+                            <option value="動画制作 (記念動画)">動画制作 (記念/式典)</option>
+                            <option value="Webサイト制作">Webサイト制作・修正</option>
+                            <option value="システム開発">GAS / システム開発</option>
+                            <option value="その他">その他</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ご予算感</label>
+                        <input type="text" id="budget" placeholder="例：10,000円〜" class="auth-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">詳細内容</label>
+                        <textarea id="message" placeholder="納期や具体的な内容をご記入ください" rows="5" required class="auth-input"></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="auth-submit">
+                        <span id="btn-text">送信する</span>
+                    </button>
+                </form>
+            </div>
+
+            <div id="success-container">
+                <div style="font-size: 4rem; color: #007bff; margin-bottom: 20px;">✓</div>
+                <h2 style="color: #fff; margin-bottom: 10px;">Thank You!</h2>
+                <p style="color: #888; line-height: 1.6;">
+                    お問い合わせを受け付けました。<br>
+                    内容を確認し、折り返しご連絡いたします。
+                </p>
+                
+                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #222;">
+                    <p style="font-size: 0.8rem; color: #555; margin-bottom: 15px;">送信内容を控えとしてコピーできます</p>
+                    <button id="copy-btn" class="auth-submit copy-info-btn">📋 内容をコピー</button>
+                </div>
+
+                <a href="index.html" style="display:inline-block; margin-top:30px; color:#555; text-decoration:none; font-size:0.9rem;">← Back to Home</a>
+            </div>
+
+        </article>
+    </div>
+
+    <div class="footer">&copy; 2026 Studio Zen-Node</div>
+
+    <script>
+        // 【重要】GASのウェブアプリURLをここに貼る
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxSNP9xAbbVzeLZ5surfB8V_B_1XzaT2ME9JuiUfaE-Km97h0jVhtkNuy8gcRO_48qU/exec";
+        
+        let lastData = "";
+
+        document.getElementById('order-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            
+            btn.disabled = true;
+            btnText.innerText = "送信中...";
+
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                type: document.getElementById('type').value,
+                budget: document.getElementById('budget').value,
+                message: document.getElementById('message').value
+            };
+
+            // コピー用テキストを保持
+            lastData = `【Studio Zen-Node 依頼控】\nお名前: ${formData.name}\n種別: ${formData.type}\n予算: ${formData.budget}\n内容: ${formData.message}`;
+
+            try {
+                // GASへPOST送信
+                await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
+
+                // 成功画面へ切り替え
+                document.getElementById('form-container').style.display = 'none';
+                document.getElementById('success-container').style.display = 'block';
+                window.scrollTo(0, 0);
+
+            } catch (err) {
+                console.error(err);
+                alert("送信に失敗しました。もう一度お試しください。");
+                btn.disabled = false;
+                btnText.innerText = "送信する";
+            }
+        });
+
+        // コピーボタンの処理
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            navigator.clipboard.writeText(lastData).then(() => {
+                const btn = document.getElementById('copy-btn');
+                btn.innerText = "✅ コピー完了";
+                btn.style.background = "#007bff";
+                setTimeout(() => {
+                    btn.innerText = "📋 内容をコピー";
+                    btn.style.background = "#333";
+                }, 2000);
+            });
+        });
+
+        document.addEventListener('dragstart', e => e.preventDefault());
+    </script>
+</body>
+</html>
