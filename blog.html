@@ -7,13 +7,10 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        .blog-post {
-            line-height: 1.8;
-            color: #ddd;
-        }
+        .blog-post { line-height: 1.8; color: #ddd; }
         .blog-post h1 { color: #007bff; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 1.5rem; }
         .blog-post h2 { color: #fff; margin-top: 2rem; border-left: 4px solid #007bff; padding-left: 15px; }
-        .blog-post h3 { color: #eee; margin-top: 1.5rem; }
+        .blog-post h3 { color: #eee; margin-top: 1.5rem; font-size: 1.2rem; }
         .blog-post p { margin-bottom: 1rem; }
         .blog-post code { background: #222; padding: 2px 5px; border-radius: 4px; color: #ff79c6; font-family: monospace; }
         .blog-post pre { background: #111; padding: 15px; border-radius: 8px; overflow-x: auto; border: 1px solid #333; }
@@ -21,6 +18,34 @@
         
         .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
         .back-link:hover { text-decoration: underline; opacity: 0.8; }
+
+        /* --- 目次（index）専用のボタン型スタイル --- */
+        .is-index ul { list-style: none; padding: 0; }
+        .is-index > ul > li { margin-bottom: 1.5rem; }
+        
+        /* 記事タイトルのリンクをボタン化 */
+        .is-index > ul > li > a {
+            display: block;
+            background: #111;
+            border: 1px solid #222;
+            padding: 20px;
+            border-radius: 12px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-left: 4px solid #007bff;
+            transition: 0.3s ease;
+        }
+        .is-index > ul > li > a:hover {
+            background: #1a1a1a;
+            border-color: #007bff;
+            transform: translateX(5px);
+        }
+
+        /* 説明文（子リスト）の調整 */
+        .is-index ul li ul { margin: 10px 0 0 20px; color: #888; font-size: 0.9rem; list-style: disc; }
+        .is-index ul li ul li { margin-bottom: 5px; border: none; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -28,7 +53,7 @@
     <script src="menu.js"></script>
 
     <div class="container">
-        <a href="blog.html" class="back-link">← Blog List</a>
+        <a id="back-btn" href="blog.html" class="back-link">← Blog List</a>
         
         <article id="content" class="card blog-post">
             <p>Loading post...</p>
@@ -38,38 +63,36 @@
     <div class="footer">&copy; 2026 Studio Zen-Node</div>
 
     <script>
-        // URLパラメータからファイル名を取得
         const urlParams = new URLSearchParams(window.location.search);
         const postName = urlParams.get('p') || 'index';
+        const contentDiv = document.getElementById('content');
+        const backBtn = document.getElementById('back-btn');
+
+        // 目次ページの場合は戻るボタンを隠す
+        if (postName === 'index') {
+            backBtn.style.visibility = 'hidden';
+            contentDiv.classList.add('is-index');
+        }
 
         async function loadPost() {
-            const contentDiv = document.getElementById('content');
             try {
-                // posts フォルダ内の .md ファイルを取得
                 const response = await fetch(`posts/${postName}.md`);
                 if (!response.ok) throw new Error('Post not found');
                 
                 const mdText = await response.text();
-                // タイトルを記事の内容に合わせて動的に変更（任意）
-                document.title = `${postName} | Blog | Studio Zen-Node`;
+                document.title = (postName === 'index') ? "Blog List | Studio Zen-Node" : `${postName} | Blog`;
                 
-                // マークダウンをHTMLに変換
                 contentDiv.innerHTML = marked.parse(mdText);
             } catch (err) {
                 contentDiv.innerHTML = `
                     <h2 style="color:#ff4444; border:none;">404 Not Found</h2>
-                    <p>指定された記事（${postName}.md）が見つかりませんでした。</p>
+                    <p>記事（${postName}.md）が見つかりませんでした。</p>
                     <a href="blog.html" style="color:#007bff;">ブログ一覧へ戻る</a>
                 `;
             }
         }
 
-        // セキュリティ：右クリックとドラッグの禁止
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('dragstart', e => e.preventDefault());
-
         loadPost();
     </script>
 </body>
 </html>
-
