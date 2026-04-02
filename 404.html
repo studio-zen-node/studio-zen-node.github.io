@@ -5,38 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 Not Found | Studio Zen-Node</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.png" type="image/png">
+
+    <meta property="og:title" content="Studio Zen-Node | 長野の学生映像クリエイター">
+    <meta property="og:description" content="長野を拠点に活動する学生映像制作ブランド。高品質な動画編集のポートフォリオ。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://studio-zen-node.github.io/">
+    <meta property="og:image" content="https://studio-zen-node.github.io/ogp-image.jpg">
+    <meta property="og:site_name" content="Studio Zen-Node">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Studio Zen-Node">
+    <meta name="twitter:description" content="長野の学生映像制作ブランドのポートフォリオサイト">
+    <meta name="twitter:image" content="https://studio-zen-node.github.io/ogp-image.jpg">
+
     <style>
-        /* 404専用のスタイル調整 */
         .error-container {
-            padding: 100px 20px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
+            padding: 0 20px;
         }
+
+        /* 404数字のアニメーション */
         .error-code {
-            font-size: 8rem;
+            font-size: clamp(6rem, 15vw, 10rem);
             font-weight: 900;
-            color: #111;
-            text-shadow: 0 0 20px rgba(0, 123, 255, 0.2);
+            color: #fff;
             line-height: 1;
-            margin-bottom: 20px;
+            margin: 0;
+            position: relative;
+            animation: glitch 3s infinite;
         }
+
+        /* ふわふわ浮くアニメーション */
+        @keyframes glitch {
+            0%, 100% { transform: translateY(0); text-shadow: 0 0 10px rgba(0, 123, 255, 0.5); }
+            50% { transform: translateY(-15px); text-shadow: 0 10px 30px rgba(0, 123, 255, 0.8); }
+        }
+
+        .not-found-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-top: -10px;
+            letter-spacing: 0.3rem;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards 0.5s;
+        }
+
         .error-message {
-            font-size: 1.2rem;
-            color: #888;
-            margin-bottom: 40px;
+            font-size: 1rem;
+            color: #666;
+            margin: 30px 0;
+            max-width: 400px;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards 1s;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 戻るボタンの調整 */
         .back-btn {
             display: inline-block;
+            background: transparent;
+            color: #007bff;
+            padding: 15px 40px;
+            border: 2px solid #007bff;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: bold;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards 1.5s;
+        }
+
+        .back-btn:hover {
             background: #007bff;
             color: #fff;
-            padding: 12px 30px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: 0.3s;
-            font-weight: bold;
+            box-shadow: 0 0 30px rgba(0, 123, 255, 0.4);
+            transform: scale(1.05);
         }
-        .back-btn:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
+
+        /* 装飾的な背景のボケ */
+        .bg-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 123, 255, 0.15) 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(50px);
         }
     </style>
 </head>
@@ -45,19 +112,23 @@
     <script src="menu.js"></script>
 
     <div class="container">
+        <div class="bg-glow"></div>
         <div class="error-container">
             <div class="error-code">404</div>
-            <h2 style="color: #007bff; margin-bottom: 10px;">Page Not Found</h2>
-            <p class="error-message">お探しのページは削除されたか、URLが間違っている可能性があります。</p>
+            <div class="not-found-text">Not Found</div>
             
-            <a href="index.html" class="back-btn">Return to Home</a>
+            <p class="error-message">
+                このページは存在しないか、移動した可能性があります。<br>
+                正しいURLかもう一度ご確認ください。
+            </p>
+            
+            <a href="index.html" class="back-btn">RETURN TO HOME</a>
         </div>
     </div>
 
     <div class="footer">&copy; 2026 Studio Zen-Node</div>
 
     <script>
-        // セキュリティ：右クリックとドラッグ禁止（他ページと統一）
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('dragstart', e => e.preventDefault());
     </script>
