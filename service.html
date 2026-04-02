@@ -3,54 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service | Studio Zen-Node</title>
+    <title>Service & Contact | Studio Zen-Node</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.png" type="image/png">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
-        /* 料金表のスタイル */
-        .price-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 1.5rem 0;
+        /* 保存ボタンエリア */
+        .download-area {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-bottom: 20px;
         }
-        .price-item {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 20px;
-            border-radius: 10px;
+        .btn-download {
+            background: #1a1a1a;
+            color: #888;
             border: 1px solid #333;
-            text-align: center;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.3s;
         }
+        .btn-download:hover { background: #007bff; color: #fff; border-color: #007bff; }
+
+        /* 料金表 */
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+        .price-item { background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: 10px; border: 1px solid #333; text-align: center; }
         .price-item h3 { color: #007bff; margin-bottom: 10px; }
         .price-amount { font-size: 1.5rem; font-weight: 900; color: #fff; }
         .price-unit { font-size: 0.9rem; color: #666; }
 
-        /* ルール・手順のスタイル */
-        .step-list {
-            list-style: none;
-            padding: 0;
-        }
-        .step-list li {
-            position: relative;
-            padding-left: 30px;
-            margin-bottom: 15px;
-            color: #ccc;
-        }
-        .step-list li::before {
-            content: "✔";
-            position: absolute;
-            left: 0;
-            color: #007bff;
-            font-weight: bold;
-        }
+        /* フォーム部品 */
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 8px; margin-left: 5px; }
+        .auth-input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #333; background: #0a0a0a; color: #fff; font-size: 1rem; outline: none; transition: 0.3s; box-sizing: border-box; }
+        .auth-input:focus { border-color: #007bff; box-shadow: 0 0 10px rgba(0, 123, 255, 0.2); }
+        textarea.auth-input { resize: none; line-height: 1.6; }
+        
+        .auth-submit { width: 100%; background: #007bff; color: #fff; border: none; padding: 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 1.1rem; transition: 0.3s; margin-top: 10px; display: flex; justify-content: center; align-items: center; }
+        .auth-submit:hover { background: #0056b3; transform: translateY(-2px); }
+        .auth-submit:disabled { background: #333; cursor: not-allowed; transform: none; }
+        
+        .btn-loader { display: none; border: 2px solid #ffffff33; border-top: 2px solid #fff; border-radius: 50%; width: 16px; height: 16px; animation: spin 0.8s linear infinite; margin-right: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #success-container { display: none; padding: 40px 10px; text-align: center; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <script src="menu.js"></script>
 
-    <div class="container">
-        <h1 style="color:#007bff; font-weight: 900;">Service</h1>
-        <p style="color: #666; margin-bottom: 2rem;">映像制作のご依頼・料金についてのご案内です。</p>
+    <div class="container" id="capture-target">
+        <div class="download-area">
+            <button class="btn-download" onclick="saveAsImage()">📸 JPG保存</button>
+            <button class="btn-download" onclick="saveAsPDF()">📄 PDF保存</button>
+        </div>
+
+        <h1 style="color:#007bff; font-weight: 900;">Service & Contact</h1>
+        <p style="color: #666; margin-bottom: 2rem;">映像制作のご案内とご依頼フォームです。</p>
 
         <section class="card">
             <h2>Price Guide</h2>
@@ -58,49 +73,120 @@
                 <div class="price-item">
                     <h3>Short Movie</h3>
                     <p class="price-amount">¥500 <span class="price-unit">/ 1分以内</span></p>
-                    <p style="font-size: 0.8rem; color: #666;">SNS用・テロップ入れ等</p>
                 </div>
                 <div class="price-item">
                     <h3>Standard Edit</h3>
                     <p class="price-amount">¥1,000 <span class="price-unit">/ 5分以内</span></p>
-                    <p style="font-size: 0.8rem; color: #666;">YouTube・行事・記念映像</p>
                 </div>
             </div>
-            <div style="background: rgba(0, 123, 255, 0.1); padding: 15px; border-radius: 8px; text-align: center;">
-                <strong style="color: #007bff;">初回限定特典：</strong> 30秒程度の試作を無料で承ります。
+        </section>
+
+        <section class="card" id="contact-section">
+            <div id="form-container">
+                <h2 style="margin-bottom: 20px;">Order Form</h2>
+                <form id="order-form">
+                    <div class="form-group">
+                        <label class="form-label">お名前</label>
+                        <input type="text" id="name" required class="auth-input" placeholder="例：長野 太郎">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">メールアドレス</label>
+                        <input type="email" id="email" required class="auth-input" placeholder="example@mail.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">詳細内容</label>
+                        <textarea id="message" rows="5" required class="auth-input" placeholder="制作内容や納期をご記入ください"></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="auth-submit">
+                        <div id="loader" class="btn-loader"></div>
+                        <span id="btn-text">送信する</span>
+                    </button>
+                </form>
             </div>
-            <p style="font-size: 0.8rem; color: #555; margin-top: 15px; text-align: right;">
-                ※お支払いはAmazonギフト券等でお願いしております。
-            </p>
-        </section>
 
-        <section class="card">
-            <h2>Workflow & Rules</h2>
-            <ul class="step-list">
-                <li>素材は「ギガファイル便」等のクラウドサービスにてお送りください。</li>
-                <li>納期は通常1〜2週間程度となります（内容により前後します）。</li>
-                <li>修正対応は2回まで無料で承ります。</li>
-                <li>制作した映像は、実績として当サイトに掲載させていただく場合がございます。</li>
-            </ul>
-        </section>
-
-        <section class="card">
-            <h2>Contact</h2>
-            <p>ご依頼やご相談は、Discordまたは各SNSのDMまでお願いいたします。</p>
-            <p style="font-family: monospace; color: #007bff; font-size: 1.2rem; text-align: center; border: 1px dashed #333; padding: 20px;">
-                Discord ID: r.m031y
-
-            </p>
+            <div id="success-container">
+                <div style="font-size: 4rem; color: #007bff; margin-bottom: 20px;">✓</div>
+                <h2>Thank You!</h2>
+                <p style="color: #888; margin-bottom: 30px;">お問い合わせを受け付けました。<br>内容を確認し、折り返しご連絡いたします。</p>
+                <a href="index.html" style="color:#555; text-decoration:none; font-size:0.9rem;">← Back to Home</a>
+            </div>
         </section>
     </div>
 
-    <div class="footer">&copy; 2026 Studio Zen-Node | All Rights Reserved.</div>
+    <div class="footer">&copy; 2026 Studio Zen-Node</div>
 
     <script>
-        // セキュリティ：右クリックとドラッグ禁止
+        // --- GAS連携設定 ---
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxSNP9xAbbVzeLZ5surfB8V_B_1XzaT2ME9JuiUfaE-Km97h0jVhtkNuy8gcRO_48qU/exec";
+
+        document.getElementById('order-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submit-btn');
+            const loader = document.getElementById('loader');
+            const btnText = document.getElementById('btn-text');
+
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value,
+                type: "Serviceページより送信", // どのページからの依頼か判別用
+                budget: "要相談"
+            };
+
+            btn.disabled = true;
+            loader.style.display = "inline-block";
+            btnText.innerText = "送信中...";
+
+            // 爆速化（楽観的UI）
+            setTimeout(() => {
+                document.getElementById('form-container').style.display = 'none';
+                document.getElementById('success-container').style.display = 'block';
+                document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+
+            // GASへ裏側で送信
+            fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(formData)
+            });
+        });
+
+        // --- 保存機能 ---
+        function saveAsImage() {
+            const target = document.getElementById("capture-target");
+            const btnArea = document.querySelector(".download-area");
+            btnArea.style.visibility = "hidden";
+
+            html2canvas(target, { backgroundColor: "#050505", scale: 2 }).then(canvas => {
+                const link = document.createElement("a");
+                link.href = canvas.toDataURL("image/jpeg", 0.9);
+                link.download = "Studio-Zen-Node-Info.jpg";
+                link.click();
+                btnArea.style.visibility = "visible";
+            });
+        }
+
+        async function saveAsPDF() {
+            const { jsPDF } = window.jspdf;
+            const target = document.getElementById("capture-target");
+            const btnArea = document.querySelector(".download-area");
+            btnArea.style.visibility = "hidden";
+
+            html2canvas(target, { backgroundColor: "#050505", scale: 2 }).then(canvas => {
+                const imgData = canvas.toDataURL("image/jpeg", 1.0);
+                const pdf = new jsPDF("p", "mm", "a4");
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+                pdf.save("Studio-Zen-Node-Info.pdf");
+                btnArea.style.visibility = "visible";
+            });
+        }
+
         document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('dragstart', e => e.preventDefault());
     </script>
 </body>
 </html>
-
