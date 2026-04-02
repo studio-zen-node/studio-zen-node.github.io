@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery System | Studio Zen-Node</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        .deliver-card { text-align: center; padding: 60px 20px; min-height: 450px; display: flex; flex-direction: column; justify-content: center; }
+        .project-title { color: #007bff; font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; }
+        .client-name { color: #888; margin-bottom: 40px; font-size: 1.1rem; }
+        .preview-container { background: #111; border: 1px solid #333; padding: 25px; border-radius: 15px; margin-bottom: 40px; line-height: 1.6; text-align: left; }
+        .download-btn {
+            display: inline-block;
+            background: #007bff;
+            color: #fff !important;
+            padding: 18px 60px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 123, 255, 0.4);
+        }
+        .download-btn:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0, 123, 255, 0.6); background: #0056b3; }
+        
+        /* 認証フォーム用 */
+        .auth-container { max-width: 400px; margin: 0 auto; }
+        .auth-input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: #0a0a0a;
+            color: #fff;
+            text-align: center;
+            font-size: 1.1rem;
+            outline: none;
+        }
+        .auth-input:focus { border-color: #007bff; box-shadow: 0 0 10px rgba(0, 123, 255, 0.2); }
+        .auth-submit {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .auth-submit:hover { background: #0056b3; }
+        .error-text { color: #ff4444; margin-top: 15px; font-size: 0.9rem; display: none; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="container">
+        <article id="main-content" class="card deliver-card">
+            <p style="color:#666;">システムを初期化中...</p>
+        </article>
+    </div>
+
+    <div class="footer">&copy; 2026 Studio Zen-Node</div>
+
+    <script>
+        // 【重要】先ほどデプロイしたGASのURLをここに貼り付けてください
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxSNP9xAbbVzeLZ5surfB8V_B_1XzaT2ME9JuiUfaE-Km97h0jVhtkNuy8gcRO_48qU/exec";
+
+        const mainContent = document.getElementById('main-content');
+        const urlParams = new URLSearchParams(window.location.search);
+        const deliveryId = urlParams.get('id');
+
+        // パスワード入力画面の表示
+        function showAuthForm(errorMsg = "") {
+            if (!deliveryId) {
+                mainContent.innerHTML = `<p style="color:#ff4444;">エラー: IDが指定されていません。URLを確認してください。</p>`;
+                return;
+            }
+            mainContent.innerHTML = `
+                <div class="auth-container">
+                    <h2 style="margin-bottom:10px;">Security Check</h2>
+                    <p style="color:#888; font-size:0.9rem; margin-bottom:30px;">ご依頼主様確認のため、パスワードを入力してください。</p>
+                    <input type="password" id="pass-input" class="auth-input" placeholder="Password" autofocus>
+                    <button class="auth-submit" onclick="handleAuth()">認証する</button>
+                    <p id="error-display" class="error-text">${errorMsg}</p>
+                </div>
+            `;
+            if (errorMsg) document.getElementById('error-display').style.display = 'block';
+        }
+
+        // 認証処理
+        async function handleAuth() {
+            const pass = document.getElementById('pass-input').value;
+            if (!pass) return;
+
+            mainContent.innerHTML = `<p style="color:#007bff;">認証情報を照合中...</p>`;
+
+            try {
+                // GASにfetchを飛ばす
+                const response = await fetch(`${GAS_URL}?id=${deliveryId}&pass=${pass}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    renderDeliveryPage(data);
+                } else {
+                    showAuthForm("パスワードが正しくありません。");
+                }
+            } catch (err) {
+                console.error(err);
+                showAuthForm("通信エラーが発生しました。時間を置いて再度お試しください。");
+            }
+        }
+
+        // 納品ページの描画
+        function renderDeliveryPage(data) {
+            document.title = `${data.title} | Delivery | Studio Zen-Node`;
+            mainContent.innerHTML = `
+                <div class="project-title">${data.title}</div>
+                <div class="client-name">ご依頼主：${data.client}</div>
+                <div class="preview-container">
+                    <p style="color:#555; font-size:0.8rem; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">PREVIEW / MESSAGE</p>
+                    <div style="padding-top:10px;">${data.preview}</div>
+                </div>
+                <div>
+                    <a href="${data.url}" class="download-btn" target="_blank">DOWNLOAD DATA</a>
+                </div>
+                <p style="margin-top:40px; font-size:0.8rem; color:#444;">※ダウンロード後のトラブルについては責任を負いかねます。<br>※リンクの有効期限にご注意ください。</p>
+            `;
+        }
+
+        // Enterキーでも送信できるようにする
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && document.getElementById('pass-input')) {
+                handleAuth();
+            }
+        });
+
+        // 起動
+        showAuthForm();
+        document.addEventListener('dragstart', e => e.preventDefault());
+    </script>
+</body>
+</html>
