@@ -49,28 +49,29 @@
             font-size: 1.1rem;
             transition: 0.3s;
             margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .auth-submit:hover { background: #0056b3; transform: translateY(-2px); }
         .auth-submit:disabled { background: #333; cursor: not-allowed; transform: none; }
 
-        /* 完了画面用 */
-        #success-container { display: none; padding: 40px 10px; }
-        .copy-info-btn { background: #333; margin-top: 20px; }
-        
-        /* ローディング */
-        .loader {
+        /* ボタン内のくるくるアニメーション */
+        .btn-loader {
             display: none;
-            border: 3px solid #1a1a1a;
-            border-top: 3px solid #007bff;
+            border: 2px solid #ffffff33;
+            border-top: 2px solid #fff;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
+            width: 16px;
+            height: 16px;
+            animation: spin 0.8s linear infinite;
             margin-right: 10px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* 完了画面用 */
+        #success-container { display: none; padding: 40px 10px; }
+        .copy-info-btn { background: #333; margin-top: 20px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -117,6 +118,7 @@
                     </div>
 
                     <button type="submit" id="submit-btn" class="auth-submit">
+                        <div id="loader" class="btn-loader"></div>
                         <span id="btn-text">送信する</span>
                     </button>
                 </form>
@@ -144,19 +146,19 @@
     <div class="footer">&copy; 2026 Studio Zen-Node</div>
 
     <script>
-        // 【重要】GASのウェブアプリURLをここに貼る
+        // 最新のGASウェブアプリURL
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxSNP9xAbbVzeLZ5surfB8V_B_1XzaT2ME9JuiUfaE-Km97h0jVhtkNuy8gcRO_48qU/exec";
         
         let lastData = "";
 
-        document.getElementById('order-form').addEventListener('submit', async (e) => {
+        document.getElementById('order-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            const btnText = document.getElementById('btn-text');
             
-            btn.disabled = true;
-            btnText.innerText = "送信中...";
+            const btn = document.getElementById('submit-btn');
+            const loader = document.getElementById('loader');
+            const btnText = document.getElementById('btn-text');
 
+            // フォームのデータを取得
             const formData = {
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
@@ -165,27 +167,31 @@
                 message: document.getElementById('message').value
             };
 
-            // コピー用テキストを保持
+            // コピー用テキストを作成
             lastData = `【Studio Zen-Node 依頼控】\nお名前: ${formData.name}\n種別: ${formData.type}\n予算: ${formData.budget}\n内容: ${formData.message}`;
 
-            try {
-                // GASへPOST送信
-                await fetch(GAS_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(formData)
-                });
+            // --- 爆速化処理 (楽観的UI) ---
+            // 1. ボタンを送信中状態にする
+            btn.disabled = true;
+            loader.style.display = "inline-block";
+            btnText.innerText = "送信中...";
 
-                // 成功画面へ切り替え
+            // 2. 0.5秒だけあえて待たせて「送った感」を出し、すぐに完了画面へ
+            setTimeout(() => {
                 document.getElementById('form-container').style.display = 'none';
                 document.getElementById('success-container').style.display = 'block';
                 window.scrollTo(0, 0);
+            }, 500);
 
-            } catch (err) {
-                console.error(err);
-                alert("送信に失敗しました。もう一度お試しください。");
-                btn.disabled = false;
-                btnText.innerText = "送信する";
-            }
+            // 3. 裏側（非同期）でGASへ送信
+            // mode: 'no-cors' を指定することで、Google側からの返事を待たずに処理を終了させます
+            fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                body: JSON.stringify(formData)
+            }).catch(err => {
+                console.error("Background send failed:", err);
+            });
         });
 
         // コピーボタンの処理
@@ -201,6 +207,9 @@
             });
         });
 
+        // 右クリック禁止
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        // ドラッグ禁止
         document.addEventListener('dragstart', e => e.preventDefault());
     </script>
 </body>
