@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Profile | Studio Zen-Node</title>
+    <link rel="stylesheet" href="../../style.css"> <style>
+        :root { --accent: #007bff; --bg-card: rgba(255, 255, 255, 0.02); --border: #222; }
+        .biz-page { max-width: 900px; margin: 0 auto; padding: 100px 20px; color: #ccc; }
+        section { margin-bottom: 100px; }
+        h2 { font-size: 1.5rem; color: var(--accent); letter-spacing: 5px; border-left: 3px solid var(--accent); padding-left: 20px; margin-bottom: 40px; text-transform: uppercase; }
+        .vision-box { background: var(--bg-card); border: 1px solid var(--border); padding: 50px; }
+        .vision-box h3 { color: #fff; font-size: 1.8rem; margin-bottom: 30px; line-height: 1.5; }
+        .vision-box p { line-height: 2; font-size: 0.95rem; margin-bottom: 20px; }
+        .signature { text-align: right; font-size: 1.1rem; color: #fff; margin-top: 40px; font-weight: bold; }
+        .profile-table { width: 100%; border-collapse: collapse; }
+        .profile-table th, .profile-table td { padding: 25px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+        .profile-table th { width: 30%; color: #666; font-weight: normal; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
+        .profile-table td { font-size: 1rem; line-height: 1.8; }
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .card-item { background: var(--bg-card); border: 1px solid var(--border); padding: 30px; }
+        .card-item h4 { color: #fff; margin-bottom: 15px; border-bottom: 1px solid var(--accent); display: inline-block; padding-bottom: 5px; }
+        .card-item p { font-size: 0.85rem; color: #888; line-height: 1.7; }
+        .contact-info { background: #050505; border: 1px solid var(--accent); padding: 40px; text-align: center; }
+        .btn-inquiry { display: block; background: var(--accent); color: #fff; text-decoration: none; padding: 20px; margin-top: 40px; font-weight: bold; letter-spacing: 5px; text-transform: uppercase; }
+        @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+    <script src="../../menu.js"></script>
+    <div class="biz-page">
+        <header style="text-align: center; margin-bottom: 120px;">
+            <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: 15px; color: #fff;">BUSINESS</h1>
+            <p style="color: var(--accent); letter-spacing: 8px; font-size: 0.7rem; margin-top: 15px;">Studio Zen-Node Official Profile</p>
+        </header>
+
+        <section id="vision">
+            <h2>Vision & Message</h2>
+            <div class="vision-box">
+                <h3>Beyond Imagination,<br>Powered by Technology.</h3>
+                <p>Studio Zen-Node was established to merge the logic of information engineering with the creative spirit of video production. We build "visual solutions" that maximize our clients' value by utilizing the latest AI technologies and advanced editing workflows.</p>
+                <div class="signature">Representative, Studio Zen-Node</div>
+            </div>
+        </section>
+
+        <section id="profile">
+            <h2>Overview</h2>
+            <table class="profile-table">
+                <tr><th>Trade Name</th><td>Studio Zen-Node</td></tr>
+                <tr><th>Representative</th><td>Representative</td></tr>
+                <tr><th>Location</th><td>Nagano, Japan</td></tr>
+                <tr><th>Established</th><td>March 27, 2026</td></tr>
+                <tr><th>Capital</th><td>Self-funded (Unregistered Individual Business)</td></tr>
+                <tr><th>Services</th><td>Digital Video Editing, Motion Graphics, Web Front-end Development</td></tr>
+            </table>
+        </section>
+
+        <section id="services">
+            <h2>Services</h2>
+            <div class="grid-layout">
+                <div class="card-item">
+                    <h4>Post-Production</h4>
+                    <p>By focusing exclusively on editing using client-provided footage, we provide high-quality production at a competitive cost.</p>
+                </div>
+                <div class="card-item">
+                    <h4>Works</h4>
+                    <p>Leveraging expertise gained from school events and festivals, we provide rapid and dramatic visual storytelling.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact & Access</h2>
+            <div class="contact-info">
+                <strong>Online & Worldwide</strong>
+                <p>We operate as a fully online studio. We do not offer on-site filming; we accept requests worldwide via digital data transfer.</p>
+                <p style="color: #fff; font-weight: bold;">Payment: Amazon Gift Card Only</p>
+                <p style="color: #666; font-size: 0.85rem; margin-top:20px;">
+                    Email: miyazaki.ngn@gmail.com<br>
+                    Available Hours: TBD (By Appointment)
+                </p>
+                <a href="../../service.html" class="btn-inquiry">Inquiry</a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
