@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruit | Studio Zen-Node</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* 採用ページ専用のスタイル */
+        .recruit-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 80vh; /* 画面中央に配置 */
+            text-align: center;
+        }
+
+        /* 「羽ばたく」を表現するアニメーション */
+        .wing-icon {
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 30px;
+            animation: wingFly 3s ease-in-out infinite;
+            opacity: 0.7;
+        }
+
+        .recruit-title {
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            color: #fff;
+            font-weight: 900;
+            letter-spacing: 15px; /* 文字間隔を広く */
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .recruit-subtitle {
+            font-size: 0.8rem;
+            color: #444;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-top: 15px;
+        }
+
+        /* 隠し要素（ホバー時に小さく表示） */
+        .status-note {
+            font-size: 0.7rem;
+            color: #222;
+            margin-top: 80px;
+            letter-spacing: 2px;
+            transition: 0.5s;
+        }
+        .recruit-wrapper:hover .status-note {
+            color: #555; /* ホバーで少し見えるように */
+        }
+
+        @keyframes wingFly {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+            50% { transform: translateY(-15px) rotate(5deg); opacity: 1; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+    
+    <script src="../menu.js"></script>
+
+    <div class="container">
+        <div class="recruit-wrapper">
+            <div class="wing-icon">🕊️</div> 
+
+            <h1 class="recruit-title">RECRUIT</h1>
+            <p class="recruit-subtitle">Future is Creation</p>
+            
+            <p class="status-note">Currently, not accepting applications.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 Studio Zen-Node
+    </div>
+
+</body>
+</html>
