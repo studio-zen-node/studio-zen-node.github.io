@@ -5,17 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receipt Generator | Studio Zen-Node</title>
     <link rel="icon" href="favicon.png" type="image/png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body { background: #111; color: #ccc; font-family: sans-serif; margin: 0; padding: 20px; }
         .config-panel { max-width: 700px; margin: 0 auto 30px; background: #1a1a1a; padding: 25px; border-radius: 12px; border: 1px solid #333; }
         .config-group { margin-bottom: 15px; }
         .config-label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
         .config-input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box; }
-        .print-btn { width: 100%; padding: 18px; background: #007bff; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .print-btn { width: 100%; padding: 18px; background: #007bff; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        .print-btn:hover { background: #0056b3; }
         
         /* 領収書本体 */
-        .receipt-paper { 
-            width: 100%; max-width: 700px; aspect-ratio: 1 / 1.414; 
+        #receipt-area {
+            width: 700px; /* キャプチャ精度のため固定幅 */
+            aspect-ratio: 1 / 1.414; 
             margin: 0 auto; background: #fff; color: #000; padding: 80px 60px; 
             box-sizing: border-box; position: relative;
         }
@@ -30,20 +33,22 @@
         .issuer-brand { font-size: 2rem; font-weight: 900; letter-spacing: 0.1rem; }
         .issuer-link { font-size: 0.75rem; color: #007bff; text-decoration: none; border-bottom: 1px solid #007bff; }
 
-        /* スタンプ */
-        .issuer-stamp {
-            width: 85px; height: 85px; border: 3px solid #ff4444; color: #ff4444; 
-            border-radius: 50%; margin: 15px 0 0 auto; transform: rotate(-10deg); 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            font-family: serif; font-weight: bold; mix-blend-mode: multiply; opacity: 0.85; position: relative;
+        /* 画像スタンプ（自作印面）の配置 */
+        .issuer-stamp-img {
+            width: 85px; 
+            height: auto; 
+            position: absolute;
+            bottom: -25px;
+            right: -10px;
+            transform: rotate(-8deg); 
+            mix-blend-mode: multiply; 
+            opacity: 0.95; 
         }
-        .stamp-top { font-size: 0.75rem; }
-        .stamp-mid { font-size: 1.2rem; border-top: 1px solid #ff4444; border-bottom: 1px solid #ff4444; margin: 2px 0; }
 
         @media print {
             body { background: none; padding: 0; }
             .config-panel { display: none; }
-            .receipt-paper { box-shadow: none; border: none; width: 100%; margin: 0; }
+            #receipt-area { box-shadow: none; border: none; width: 100%; margin: 0; }
         }
     </style>
 </head>
@@ -64,10 +69,11 @@
             <input type="number" id="in-price" class="config-input" value="1000" oninput="update()">
             <input type="text" id="in-note" class="config-input" value="動画制作代金として" oninput="update()" style="margin-top:5px;">
         </div>
-        <button class="print-btn" onclick="window.print()">PDFとして保存・発行</button>
+        <button class="print-btn" onclick="saveReceipt()">受領証を画像として保存 (即時DL)</button>
+        <p style="text-align:center; font-size:0.7rem; color:#666; margin-top:10px;">※PDFが必要な場合は Ctrl+P から保存してください</p>
     </div>
 
-    <div class="receipt-paper">
+    <div id="receipt-area">
         <div class="receipt-header">受 領 証</div>
         <div class="receipt-to"><span id="out-name"></span> 御中</div>
         <div class="amount-box" id="out-price">1,000</div>
@@ -77,7 +83,7 @@
             <span style="font-size: 0.85rem; color: #555;">（内訳：Amazonギフト券によるお支払い）</span>
         </div>
 
-        <div class="issuer-info">
+        <div class="issuer-info" style="position: relative;">
             <p id="out-date" style="margin-bottom: 15px; font-weight: bold; font-size: 1.1rem;"></p>
             <div class="issuer-brand">Studio Zen-Node</div>
             <div style="font-size: 0.85rem; margin: 5px 0;">Email: miyazaki.ngn@gmail.com</div>
@@ -86,11 +92,7 @@
                 <a href="https://studio-zen-node.github.io/service.html#orderform" class="issuer-link">studio-zen-node.github.io/service.html#orderform</a>
             </div>
             
-            <div class="issuer-stamp">
-                <div class="stamp-top">Studio</div>
-                <div class="stamp-mid">Zen-Node</div>
-                <div style="font-size:0.75rem;">印</div>
-            </div>
+            <img src="zen-node-seal.png" alt="印" class="issuer-stamp-img">
         </div>
     </div>
 
@@ -118,6 +120,23 @@
             const fileName = `${y}${m}${d}_${name}様_受領証`;
             document.title = fileName; 
         }
+
+        // 即時保存・ダウンロード機能
+        function saveReceipt() {
+            update();
+            const target = document.getElementById("receipt-area");
+            
+            html2canvas(target, {
+                scale: 2, // 高解像度でキャプチャ
+                useCORS: true // 外部リソースがある場合用
+            }).then(canvas => {
+                const link = document.createElement("a");
+                link.href = canvas.toDataURL("image/png");
+                link.download = document.title + ".png"; // 自動生成したファイル名で保存
+                link.click();
+            });
+        }
+
         update();
     </script>
 </body>
