@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <li><a href="service.html">Service<span>ご依頼・料金</span></a></li>
                 <li><a href="env.html">Environment<span>制作環境</span></a></li>
                 <li><a href="terms.html">Terms<span>利用規約</span></a></li>
+                <li><a href="legal.html">Legal<span>特定商取引法</span></a></li>
             </ul>
         </div>
     </nav>
