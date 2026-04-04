@@ -3,81 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business | Studio Zen-Node</title>
+    <title>Corporate Profile | Studio Zen-Node</title>
     <link rel="stylesheet" href="../style.css">
     <style>
-        .business-container { max-width: 900px; margin: 0 auto; padding: 4rem 20px; }
-        .business-section { margin-bottom: 5rem; }
-        .business-section h2 { 
-            font-size: 1.8rem; color: #007bff; border-left: 4px solid #007bff; 
-            padding-left: 20px; margin-bottom: 2rem; letter-spacing: 3px;
-        }
-        .info-card { 
-            background: rgba(255, 255, 255, 0.03); border: 1px solid #222; 
-            padding: 2rem; border-radius: 4px; line-height: 2; color: #ccc;
-        }
-        .accent-text { color: #fff; font-weight: bold; }
-        .alert-box { border: 1px solid #444; padding: 1.5rem; margin-top: 2rem; border-radius: 4px; background: rgba(0, 123, 255, 0.05); }
+        :root { --accent: #007bff; --bg-card: rgba(255, 255, 255, 0.02); --border: #222; }
+        .biz-page { max-width: 900px; margin: 0 auto; padding: 100px 20px; color: #ccc; }
+        section { margin-bottom: 100px; }
+        h2 { font-size: 1.5rem; color: var(--accent); letter-spacing: 5px; border-left: 3px solid var(--accent); padding-left: 20px; margin-bottom: 40px; text-transform: uppercase; }
+        .vision-box { background: var(--bg-card); border: 1px solid var(--border); padding: 50px; }
+        .vision-box h3 { color: #fff; font-size: 1.8rem; margin-bottom: 30px; line-height: 1.5; }
+        .vision-box p { line-height: 2; font-size: 0.95rem; margin-bottom: 20px; }
+        .signature { text-align: right; font-size: 1.1rem; color: #fff; margin-top: 40px; font-weight: bold; }
+        .profile-table { width: 100%; border-collapse: collapse; }
+        .profile-table th, .profile-table td { padding: 25px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+        .profile-table th { width: 30%; color: #666; font-weight: normal; font-size: 0.8rem; letter-spacing: 2px; }
+        .profile-table td { font-size: 1rem; line-height: 1.8; }
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .card-item { background: var(--bg-card); border: 1px solid var(--border); padding: 30px; }
+        .card-item h4 { color: #fff; margin-bottom: 15px; border-bottom: 1px solid var(--accent); display: inline-block; padding-bottom: 5px; }
+        .card-item p { font-size: 0.85rem; color: #888; line-height: 1.7; }
+        .contact-info { background: #050505; border: 1px solid var(--accent); padding: 40px; text-align: center; }
+        .btn-inquiry { display: block; background: var(--accent); color: #fff; text-decoration: none; padding: 20px; margin-top: 40px; font-weight: bold; letter-spacing: 5px; }
+        @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body oncontextmenu="return false;">
-
     <script src="../menu.js"></script>
-
-    <div class="container business-container">
-        <header style="text-align:center; margin-bottom: 6rem;">
-            <h1 style="font-size: clamp(2.5rem, 10vw, 4rem); color:#fff; font-weight:900; letter-spacing: 10px;">BUSINESS</h1>
-            <p style="letter-spacing:5px; color:#444; text-transform: uppercase; font-size: 0.8rem; margin-top: 10px;">Post-Production Solutions</p>
+    <div class="biz-page">
+        <header style="text-align: center; margin-bottom: 120px;">
+            <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: 15px; color: #fff;">BUSINESS</h1>
+            <p style="color: var(--accent); letter-spacing: 8px; font-size: 0.7rem; margin-top: 15px;">Studio Zen-Node Official Profile</p>
         </header>
 
-        <section class="business-section">
-            <h2>Service Scope</h2>
-            <div class="info-card">
-                <p>Studio Zen-Nodeは、提供いただいた素材（動画・画像・音声）を基に、最適な映像体験を構築する<span class="accent-text">ポストプロダクション（編集）特化型</span>の制作スタジオです。</p>
-                <ul style="list-style-type: square; margin-left: 20px;">
-                    <li><span class="accent-text">映像編集</span>：カット、テロップ挿入、色調補正、音整。</li>
-                    <li><span class="accent-text">SNS最適化</span>：TikTok、YouTubeショート等の縦型動画制作。</li>
-                    <li><span class="accent-text">モーショングラフィックス</span>：アニメーションロゴ、インフォグラフィック。</li>
-                </ul>
-                <div class="alert-box">
-                    <p style="font-size: 0.9rem; color: #007bff; margin: 0; font-weight: bold;">※現地での撮影業務、および機材の貸出には対応しておりません。</p>
+        <section id="vision">
+            <h2>Vision & Message</h2>
+            <div class="vision-box">
+                <h3>技術という翼で、<br>想像の先へ。</h3>
+                <p>Studio Zen-Nodeは、情報工学の論理と映像制作の感性を融合させるために誕生しました。最新のAI技術や高度な編集フローを駆使し、クライアント様の価値を最大化する「視覚的解決策」を構築します。</p>
+                <div class="signature">Studio Zen-Node 代表</div>
+            </div>
+        </section>
+
+        <section id="profile">
+            <h2>Company Overview</h2>
+            <table class="profile-table">
+                <tr><th>商号</th><td>Studio Zen-Node（スタジオ ゼンノード）</td></tr>
+                <tr><th>代表者</th><td>代表</td></tr>
+                <tr><th>所在地</th><td>日本 長野</td></tr>
+                <tr><th>設立</th><td>2026年3月27日</td></tr>
+                <tr><th>資本金</th><td>自己資本（個人事業・未登録）</td></tr>
+                <tr><th>事業内容</th><td>デジタル映像編集、モーショングラフィックス、Webフロントエンド開発</td></tr>
+            </table>
+        </section>
+
+        <section id="services">
+            <h2>Services</h2>
+            <div class="grid-layout">
+                <div class="card-item">
+                    <h4>Post-Production</h4>
+                    <p>素材はお客様にてご用意いただき、当方は編集に特化することで、高品質かつ低価格な制作を実現しています。</p>
+                </div>
+                <div class="card-item">
+                    <h4>Works</h4>
+                    <p>三送会や文化祭等のイベント映像制作で培ったノウハウを活かし、迅速かつドラマチックな演出を提供します。</p>
                 </div>
             </div>
         </section>
 
-        <section class="business-section">
-            <h2>Payment & Terms</h2>
-            <div class="info-card">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tr>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #222; color: #666;">決済方法</td>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #222;"><span class="accent-text">Amazonギフトカード (Eメールタイプ)</span></td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #222; color: #666;">素材受渡</td>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #222;">クラウドストレージ（ギガファイル便等）経由</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #222; color: #666;">修正対応</td>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #222;">原則2回まで（大幅な構成変更を除く）</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px 0; color: #666;">対応範囲</td>
-                        <td style="padding: 10px 0;">全国対応（完全オンライン完結）</td>
-                    </tr>
-                </table>
+        <section id="contact">
+            <h2>Contact & Access</h2>
+            <div class="contact-info">
+                <strong>Online & Worldwide</strong>
+                <p>撮影（現地訪問）は行わず、データのやり取りのみで全国からご依頼を承ります。</p>
+                <p style="color: #fff; font-weight: bold;">決済方法：Amazonギフトカードのみ</p>
+                <p style="color: #666; font-size: 0.85rem; margin-top:20px;">
+                    Email: miyazaki.ngn@gmail.com<br>
+                    対応時間: 未定 (応相談)
+                </p>
+                <a href="../service.html" class="btn-inquiry">お問い合わせ</a>
             </div>
         </section>
-
-        <section style="text-align: center; margin-top: 5rem;">
-            <a href="../service.html" class="btn-home">INQUIRY / CONTACT</a>
-        </section>
     </div>
-
-    <div class="footer">&copy; 2026 Studio Zen-Node</div>
-
 </body>
 </html>
-
-
-
