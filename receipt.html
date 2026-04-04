@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt Generator | Studio Zen-Node</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        /* ベーススタイル */
+        body {
+            background: #111;
+            color: #ccc;
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* 入力エリア（印刷時には隠す） */
+        .config-panel {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        .config-group { margin-bottom: 15px; }
+        .config-label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+        .config-input {
+            width: 100%;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .print-btn {
+            width: 100%;
+            padding: 15px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .print-btn:hover { background: #0056b3; }
+
+        /* 領収書本体（A4比率を意識） */
+        .receipt-paper {
+            width: 100%;
+            max-width: 700px;
+            aspect-ratio: 1 / 1.414; /* A4比率 */
+            margin: 0 auto;
+            background: #fff;
+            color: #000;
+            padding: 60px;
+            box-sizing: border-box;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .receipt-header {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-align: center;
+            border-bottom: 3px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 40px;
+            letter-spacing: 1rem;
+        }
+
+        .receipt-to {
+            font-size: 1.2rem;
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            min-width: 250px;
+            margin-bottom: 40px;
+        }
+
+        .amount-box {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: bold;
+            border-bottom: 2px solid #000;
+            margin: 40px 0;
+            padding: 10px 0;
+        }
+        .amount-box::before { content: "￥"; font-size: 2rem; margin-right: 10px; }
+        .amount-box::after { content: " -"; font-size: 2rem; }
+
+        .receipt-body {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 60px;
+        }
+
+        .issuer-info {
+            text-align: right;
+            position: absolute;
+            bottom: 60px;
+            right: 60px;
+        }
+        .issuer-name { font-size: 1.3rem; font-weight: bold; margin-bottom: 5px; }
+        .issuer-stamp {
+            display: inline-block;
+            border: 2px solid #ff4444;
+            color: #ff4444;
+            padding: 5px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            border-radius: 3px;
+        }
+
+        /* 印刷設定 */
+        @media print {
+            body { background: none; padding: 0; }
+            .config-panel { display: none; }
+            .receipt-paper { box-shadow: none; border: none; width: 100%; margin: 0; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="config-panel">
+        <h2 style="margin-top:0; color:#007bff;">Receipt Generator</h2>
+        <div class="config-group">
+            <span class="config-label">宛名（クライアント名）</span>
+            <input type="text" id="in-name" class="config-input" placeholder="例：長野 太郎 様" oninput="update()">
+        </div>
+        <div class="config-group">
+            <span class="config-label">金額（半角数字）</span>
+            <input type="number" id="in-price" class="config-input" value="1000" oninput="update()">
+        </div>
+        <div class="config-group">
+            <span class="config-label">但し書き</span>
+            <input type="text" id="in-note" class="config-input" value="動画制作代金として" oninput="update()">
+        </div>
+        <button class="print-btn" onclick="window.print()">PDFとして保存・印刷</button>
+    </div>
+
+    <div class="receipt-paper">
+        <div class="receipt-header">受 領 証</div>
+        
+        <div class="receipt-to">
+            <span id="out-name">（宛名を入力してください）</span> 御中
+        </div>
+
+        <div class="amount-box" id="out-price">1,000</div>
+
+        <div class="receipt-body">
+            上記、正に受領いたしました。<br>
+            但し、<span id="out-note">動画制作代金として</span><br>
+            （内訳：Amazonギフト券によるお支払い）
+        </div>
+
+        <div class="issuer-info">
+            <p id="out-date" style="margin-bottom: 20px;"></p>
+            <div class="issuer-name">Studio Zen-Node</div>
+            <div>代表：[あなたの名前]</div>
+            <div>Discord: r.m031y</div>
+            <div class="issuer-stamp">Studio Zen-Node 印</div>
+        </div>
+    </div>
+
+    <script>
+        // 日付を自動セット
+        const today = new Date();
+        document.getElementById('out-date').innerText = 
+            `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+
+        // 入力をリアルタイム反映
+        function update() {
+            const name = document.getElementById('in-name').value || "（宛名を入力してください）";
+            const price = Number(document.getElementById('in-price').value).toLocaleString();
+            const note = document.getElementById('in-note').value;
+
+            document.getElementById('out-name').innerText = name;
+            document.getElementById('out-price').innerText = price;
+            document.getElementById('out-note').innerText = note;
+        }
+
+        // 初回実行
+        update();
+    </script>
+</body>
+</html>
