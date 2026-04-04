@@ -6,115 +6,40 @@
     <title>Receipt Generator | Studio Zen-Node</title>
     <link rel="icon" href="favicon.png" type="image/png">
     <style>
-        /* ベーススタイル */
-        body {
-            background: #111;
-            color: #ccc;
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-
-        /* 入力エリア（印刷時には隠す） */
-        .config-panel {
-            max-width: 700px;
-            margin: 0 auto 30px;
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #333;
-        }
+        body { background: #111; color: #ccc; font-family: sans-serif; margin: 0; padding: 20px; }
+        .config-panel { max-width: 700px; margin: 0 auto 30px; background: #1a1a1a; padding: 25px; border-radius: 12px; border: 1px solid #333; }
         .config-group { margin-bottom: 15px; }
         .config-label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
-        .config-input {
-            width: 100%;
-            padding: 10px;
-            background: #000;
-            border: 1px solid #444;
-            color: #fff;
-            border-radius: 5px;
-            box-sizing: border-box;
+        .config-input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box; }
+        .print-btn { width: 100%; padding: 18px; background: #007bff; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        
+        /* 領収書本体 */
+        .receipt-paper { 
+            width: 100%; max-width: 700px; aspect-ratio: 1 / 1.414; 
+            margin: 0 auto; background: #fff; color: #000; padding: 80px 60px; 
+            box-sizing: border-box; position: relative;
         }
-        .print-btn {
-            width: 100%;
-            padding: 15px;
-            background: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .print-btn:hover { background: #0056b3; }
+        .receipt-header { font-size: 2.8rem; font-weight: 900; text-align: center; border-bottom: 4px solid #000; padding-bottom: 15px; margin-bottom: 50px; letter-spacing: 1.2rem; }
+        .receipt-to { font-size: 1.4rem; border-bottom: 2px solid #000; display: inline-block; min-width: 300px; margin-bottom: 50px; }
+        .amount-box { text-align: center; font-size: 3.5rem; font-weight: bold; border-bottom: 3px double #000; margin: 50px 0; padding: 15px 0; font-family: serif; }
+        .amount-box::before { content: "￥"; font-size: 2.5rem; }
+        .amount-box::after { content: " -"; font-size: 2.5rem; }
+        
+        /* 発行者情報 */
+        .issuer-info { text-align: right; position: absolute; bottom: 80px; right: 80px; }
+        .issuer-brand { font-size: 2rem; font-weight: 900; letter-spacing: 0.1rem; }
+        .issuer-link { font-size: 0.75rem; color: #007bff; text-decoration: none; border-bottom: 1px solid #007bff; }
 
-        /* 領収書本体（A4比率を意識） */
-        .receipt-paper {
-            width: 100%;
-            max-width: 700px;
-            aspect-ratio: 1 / 1.414; /* A4比率 */
-            margin: 0 auto;
-            background: #fff;
-            color: #000;
-            padding: 60px;
-            box-sizing: border-box;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
-        .receipt-header {
-            font-size: 2.5rem;
-            font-weight: 900;
-            text-align: center;
-            border-bottom: 3px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 40px;
-            letter-spacing: 1rem;
-        }
-
-        .receipt-to {
-            font-size: 1.2rem;
-            border-bottom: 1px solid #000;
-            display: inline-block;
-            min-width: 250px;
-            margin-bottom: 40px;
-        }
-
-        .amount-box {
-            text-align: center;
-            font-size: 3rem;
-            font-weight: bold;
-            border-bottom: 2px solid #000;
-            margin: 40px 0;
-            padding: 10px 0;
-        }
-        .amount-box::before { content: "￥"; font-size: 2rem; margin-right: 10px; }
-        .amount-box::after { content: " -"; font-size: 2rem; }
-
-        .receipt-body {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 60px;
-        }
-
-        .issuer-info {
-            text-align: right;
-            position: absolute;
-            bottom: 60px;
-            right: 60px;
-        }
-        .issuer-name { font-size: 1.3rem; font-weight: bold; margin-bottom: 5px; }
+        /* スタンプ */
         .issuer-stamp {
-            display: inline-block;
-            border: 2px solid #ff4444;
-            color: #ff4444;
-            padding: 5px;
-            font-size: 0.8rem;
-            margin-top: 10px;
-            border-radius: 3px;
+            width: 85px; height: 85px; border: 3px solid #ff4444; color: #ff4444; 
+            border-radius: 50%; margin: 15px 0 0 auto; transform: rotate(-10deg); 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            font-family: serif; font-weight: bold; mix-blend-mode: multiply; opacity: 0.85; position: relative;
         }
+        .stamp-top { font-size: 0.75rem; }
+        .stamp-mid { font-size: 1.2rem; border-top: 1px solid #ff4444; border-bottom: 1px solid #ff4444; margin: 2px 0; }
 
-        /* 印刷設定 */
         @media print {
             body { background: none; padding: 0; }
             .config-panel { display: none; }
@@ -128,61 +53,71 @@
         <h2 style="margin-top:0; color:#007bff;">Receipt Generator</h2>
         <div class="config-group">
             <span class="config-label">宛名（クライアント名）</span>
-            <input type="text" id="in-name" class="config-input" placeholder="例：長野 太郎 様" oninput="update()">
+            <input type="text" id="in-name" class="config-input" placeholder="例：長野 太郎" oninput="update()">
         </div>
         <div class="config-group">
-            <span class="config-label">金額（半角数字）</span>
+            <span class="config-label">発行日</span>
+            <input type="date" id="in-date" class="config-input" oninput="update()">
+        </div>
+        <div class="config-group">
+            <span class="config-label">金額 / 但し書き</span>
             <input type="number" id="in-price" class="config-input" value="1000" oninput="update()">
+            <input type="text" id="in-note" class="config-input" value="動画制作代金として" oninput="update()" style="margin-top:5px;">
         </div>
-        <div class="config-group">
-            <span class="config-label">但し書き</span>
-            <input type="text" id="in-note" class="config-input" value="動画制作代金として" oninput="update()">
-        </div>
-        <button class="print-btn" onclick="window.print()">PDFとして保存・印刷</button>
+        <button class="print-btn" onclick="window.print()">PDFとして保存・発行</button>
     </div>
 
     <div class="receipt-paper">
         <div class="receipt-header">受 領 証</div>
-        
-        <div class="receipt-to">
-            <span id="out-name">（宛名を入力してください）</span> 御中
-        </div>
-
+        <div class="receipt-to"><span id="out-name"></span> 御中</div>
         <div class="amount-box" id="out-price">1,000</div>
-
         <div class="receipt-body">
             上記、正に受領いたしました。<br>
-            但し、<span id="out-note">動画制作代金として</span><br>
-            （内訳：Amazonギフト券によるお支払い）
+            但し、<span id="out-note"></span><br>
+            <span style="font-size: 0.85rem; color: #555;">（内訳：Amazonギフト券によるお支払い）</span>
         </div>
 
         <div class="issuer-info">
-            <p id="out-date" style="margin-bottom: 20px;"></p>
-            <div class="issuer-name">Studio Zen-Node</div>
-            <div>代表：[あなたの名前]</div>
-            <div>Discord: r.m031y</div>
-            <div class="issuer-stamp">Studio Zen-Node 印</div>
+            <p id="out-date" style="margin-bottom: 15px; font-weight: bold; font-size: 1.1rem;"></p>
+            <div class="issuer-brand">Studio Zen-Node</div>
+            <div style="font-size: 0.85rem; margin: 5px 0;">Email: miyazaki.ngn@gmail.com</div>
+            <div style="margin-top: 10px;">
+                <span style="font-size: 0.7rem; color: #888; display: block; margin-bottom: 2px;">ご依頼はこちらから</span>
+                <a href="https://studio-zen-node.github.io/service.html#orderform" class="issuer-link">studio-zen-node.github.io/service.html#orderform</a>
+            </div>
+            
+            <div class="issuer-stamp">
+                <div class="stamp-top">Studio</div>
+                <div class="stamp-mid">Zen-Node</div>
+                <div style="font-size:0.75rem;">印</div>
+            </div>
         </div>
     </div>
 
     <script>
-        // 日付を自動セット
-        const today = new Date();
-        document.getElementById('out-date').innerText = 
-            `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+        const days = ["日", "月", "火", "水", "木", "金", "土"];
+        const now = new Date();
+        document.getElementById('in-date').valueAsDate = now;
 
-        // 入力をリアルタイム反映
         function update() {
-            const name = document.getElementById('in-name').value || "（宛名を入力してください）";
+            const name = document.getElementById('in-name').value || "（宛名）";
             const price = Number(document.getElementById('in-price').value).toLocaleString();
             const note = document.getElementById('in-note').value;
-
+            const dateVal = new Date(document.getElementById('in-date').value);
+            
+            const dateStr = `${dateVal.getFullYear()}年${dateVal.getMonth() + 1}月${dateVal.getDate()}日 (${days[dateVal.getDay()]})`;
+            
             document.getElementById('out-name').innerText = name;
             document.getElementById('out-price').innerText = price;
             document.getElementById('out-note').innerText = note;
-        }
+            document.getElementById('out-date').innerText = dateStr;
 
-        // 初回実行
+            const y = dateVal.getFullYear();
+            const m = String(dateVal.getMonth() + 1).padStart(2, '0');
+            const d = String(dateVal.getDate()).padStart(2, '0');
+            const fileName = `${y}${m}${d}_${name}様_受領証`;
+            document.title = fileName; 
+        }
         update();
     </script>
 </body>
