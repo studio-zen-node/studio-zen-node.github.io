@@ -1,4 +1,4 @@
-// menu.js - 全ページ共通ナビゲーション & セキュリティ一括管理スクリプト
+// menu.js - 全ページ共通ナビゲーション & セキュリティ一括管理スクリプト　
 document.addEventListener('DOMContentLoaded', function() {
     // 1. ナビゲーションメニューの生成
     const navHTML = `
