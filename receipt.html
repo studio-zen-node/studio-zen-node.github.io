@@ -1,154 +1,354 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Receipt Generator | Studio Zen-Node</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        /* 認証前の非表示設定 */
-        body { background: #111; color: #ccc; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 20px; display: none; }
-        
-        /* 管理パネル */
-        .config-panel { max-width: 800px; margin: 0 auto 40px; background: #1a1a1a; padding: 30px; border-radius: 15px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .config-label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 8px; }
-        .config-input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 20px; font-size: 1rem; }
-        .save-btn { width: 100%; padding: 20px; background: #28a745; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.2rem; transition: 0.3s; }
-        .save-btn:hover { background: #218838; transform: translateY(-2px); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Zen-Node Receipt System</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root {
+--primary-green: #28a745;
+--text-dark: #333;
+--bg-gray: #f8f9fa;
+--font-serif: "Times New Roman", "MS PMincho", serif;
+--font-sans: "Inter", "Helvetica Neue", "Arial", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+}
 
-        /* 領収書本体（A4比率：余裕を持たせた設計） */
-        #receipt-pdf-area {
-            width: 794px; 
-            height: 1123px; 
-            margin: 0 auto; background: #fff; color: #000; padding: 120px 90px; 
-            box-sizing: border-box; position: relative;
-            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+    body {
+        background-color: var(--bg-gray);
+        font-family: var(--font-sans);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* 認証オーバーレイ */
+    #auth-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .auth-container {
+        text-align: center;
+        padding: 40px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+
+    .auth-container input {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        width: 200px;
+    }
+
+    .auth-container button {
+        padding: 10px 20px;
+        background: var(--primary-green);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    /* 操作パネル */
+    .controls {
+        margin: 20px 0;
+        width: 210mm;
+        display: flex;
+        gap: 15px;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        box-sizing: border-box;
+    }
+
+    .controls input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        flex-grow: 1;
+    }
+
+    .save-btn {
+        background-color: var(--primary-green);
+        color: white;
+        border: none;
+        padding: 10px 30px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: opacity 0.2s;
+    }
+
+    .save-btn:hover {
+        opacity: 0.8;
+    }
+
+    /* A4キャンバス */
+    #receipt-canvas {
+        width: 210mm;
+        height: 297mm;
+        background-color: white;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        position: relative;
+        box-sizing: border-box;
+        padding: 60px 80px; /* 十分なホワイトスペース */
+        overflow: hidden;
+        color: var(--text-dark);
+    }
+
+    /* 偽造防止：透かし */
+    #receipt-canvas::after {
+        content: "OFFICIAL RECEIPT";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-45deg);
+        font-size: 80px;
+        color: rgba(0, 0, 0, 0.03);
+        font-weight: bold;
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .header h1 {
+        font-size: 32px;
+        letter-spacing: 12px;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    .header-line {
+        border-bottom: 2px solid #000;
+        width: 100%;
+    }
+
+    .receipt-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 80px;
+    }
+
+    .receipt-id {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .address-box {
+        font-size: 24px;
+        border-bottom: 1px solid #000;
+        padding-bottom: 5px;
+        min-width: 300px;
+        margin-bottom: 100px;
+    }
+
+    .amount-display {
+        text-align: center;
+        margin-bottom: 100px;
+    }
+
+    .amount-display .label {
+        font-size: 14px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .amount-display .value {
+        font-family: var(--font-serif);
+        font-size: 48px;
+        border-bottom: 3px double #000;
+        padding: 0 40px 10px;
+        display: inline-block;
+    }
+
+    .purpose-box {
+        margin-bottom: 150px;
+        font-size: 16px;
+    }
+
+    /* 署名エリア */
+    .signature-area {
+        position: absolute;
+        bottom: 80px;
+        right: 80px;
+        text-align: left;
+        min-width: 250px;
+    }
+
+    .sig-item {
+        display: block;
+        line-height: 1.8;
+        font-size: 14px;
+    }
+
+    .brand-name {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 5px 0;
+        position: relative;
+    }
+
+    /* 印面画像 */
+    .seal-img {
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        right: -30px;
+        top: -15px;
+        opacity: 0.8;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    @media print {
+        .controls, #auth-overlay {
+            display: none !important;
         }
-
-        .receipt-header { font-size: 3.5rem; font-weight: 900; text-align: center; border-bottom: 5px solid #000; padding-bottom: 25px; margin-bottom: 100px; letter-spacing: 2rem; }
-        .receipt-to { font-size: 1.8rem; border-bottom: 2px solid #000; display: inline-block; min-width: 450px; margin-bottom: 80px; padding-bottom: 8px; }
-        .amount-box { text-align: center; font-size: 4.5rem; font-weight: bold; border-bottom: 4px double #000; margin: 90px 0; padding: 25px 0; font-family: "Times New Roman", serif; }
-        .amount-box::before { content: "￥"; font-size: 3rem; }
-        .amount-box::after { content: " -"; font-size: 3rem; }
-
-        /* 偽造防止：透かし */
-        .watermark {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-35deg);
-            font-size: 7rem; color: rgba(0,0,0,0.025); font-weight: 900; pointer-events: none; white-space: nowrap; user-select: none;
+        body {
+            background: none;
         }
-
-        .receipt-body { font-size: 1.4rem; line-height: 2.8; margin-top: 40px; }
-        .security-note { font-size: 0.9rem; color: #777; margin-top: 10px; }
-
-        /* 発行者エリア（画像スタンプ連動） */
-        .issuer-info { text-align: right; position: absolute; bottom: 120px; right: 90px; }
-        .issuer-brand { font-size: 2.5rem; font-weight: 900; margin-bottom: 8px; letter-spacing: 0.1rem; }
-        .issuer-stamp-img {
-            width: 110px; position: absolute; bottom: -35px; right: -15px;
-            transform: rotate(-10deg); mix-blend-mode: multiply; opacity: 0.92;
+        #receipt-canvas {
+            box-shadow: none;
         }
-
-        @media print { .config-panel { display: none; } body { padding: 0; background: #fff; } #receipt-pdf-area { box-shadow: none; } }
-    </style>
+    }
+</style>
 </head>
 <body>
 
-    <div class="config-panel">
-        <h2 style="color:#28a745; margin-top:0; border-left: 5px solid #28a745; padding-left: 15px;">Studio Zen-Node System</h2>
-        
-        <label class="config-label">クライアント名称</label>
-        <input type="text" id="in-name" class="config-input" placeholder="例：長野工業 太郎" oninput="update()">
-        
-        <label class="config-label">発行日付</label>
-        <input type="date" id="in-date" class="config-input" oninput="update()">
-        
-        <label class="config-label">受領金額（内税）</label>
-        <input type="number" id="in-price" class="config-input" value="1000" oninput="update()">
-        
-        <label class="config-label">但し書き</label>
-        <input type="text" id="in-note" class="config-input" value="動画制作代金として" oninput="update()">
-        
-        <button class="save-btn" onclick="downloadPDF()">受領証をPDFで生成・保存</button>
+<div id="auth-overlay">
+    <div class="auth-container">
+        <h2>管理者認証</h2>
+        <input type="password" id="pass-input" placeholder="Password">
+        <br>
+        <button onclick="checkAuth()">ログイン</button>
+        <p id="auth-error" style="color:red; display:none; font-size:12px; margin-top:10px;">パスワードが正しくありません。</p>
+    </div>
+</div>
+
+<div class="controls">
+    <input type="text" id="input-name" placeholder="宛名" oninput="updateReceipt()">
+    <input type="number" id="input-amount" placeholder="金額" oninput="updateReceipt()">
+    <input type="text" id="input-purpose" placeholder="但書き" value="サービス利用料として" oninput="updateReceipt()">
+    <button class="save-btn" onclick="generatePDF()">PDFを保存</button>
+</div>
+
+<div id="receipt-canvas">
+    <div class="receipt-id" id="display-id">ZN-XXXXXXXX</div>
+    
+    <div class="header">
+        <h1>受領証</h1>
+        <div class="header-line"></div>
     </div>
 
-    <div id="receipt-pdf-area">
-        <div class="watermark">OFFICIAL ORIGINAL</div>
-        
-        <div class="receipt-header">受 領 証</div>
-        
-        <div class="receipt-to">
-            <span id="out-name"></span> 御中
-        </div>
-
-        <div class="amount-box" id="out-price">1,000</div>
-
-        <div class="receipt-body">
-            上記、正に受領いたしました。<br>
-            但し、<span id="out-note"></span><br>
-            <div class="security-note">（決済手段：Amazonギフト券 / 証明ID: <span id="out-id"></span>）</div>
-        </div>
-
-        <div class="issuer-info">
-            <p id="out-date" style="font-weight: bold; font-size: 1.3rem; margin-bottom: 25px;"></p>
-            <div class="issuer-brand">Studio Zen-Node</div>
-            <div style="font-size: 1rem; color: #333;">Email: miyazaki.ngn@gmail.com</div>
-            <div style="margin-top:15px; font-size: 0.85rem; color: #007bff; border-bottom: 1px solid #007bff; display: inline-block; text-decoration: none;">
-                https://studio-zen-node.github.io/service.html#orderform
-            </div>
-            <img src="zen-node-seal.png" alt="印" class="issuer-stamp-img">
-        </div>
+    <div class="address-box">
+        <span id="display-name">＿＿＿＿＿＿＿＿＿＿</span> 様
     </div>
 
-    <script>
-        // 1. 管理者認証（初期パスワード：zen0403）
-        const pass = prompt("管理者認証が必要です");
-        if (pass === "zen0403") {
-            document.body.style.display = "block";
+    <div class="amount-display">
+        <span class="label">金額</span>
+        <div class="value">￥ <span id="display-amount">0</span> -</div>
+    </div>
+
+    <div class="purpose-box">
+        但：<span id="display-purpose">サービス利用料として</span>
+    </div>
+
+    <div class="signature-area">
+        <span class="sig-item" id="display-date">0000年00月00日</span>
+        <div class="brand-name">
+            Studio Zen-Node
+            <img src="zen-node-seal.png" alt="Seal" class="seal-img" onerror="this.style.display='none'">
+        </div>
+        <span class="sig-item">Email: contact@zen-node.studio</span>
+        <span class="sig-item">URL: [https://zen-node.studio](https://zen-node.studio)</span>
+    </div>
+</div>
+
+<script>
+    // 認証
+    function checkAuth() {
+        const pass = document.getElementById('pass-input').value;
+        if(pass === 'zen0403') {
+            document.getElementById('auth-overlay').style.display = 'none';
+            initReceipt();
         } else {
-            alert("権限がありません。");
-            window.location.href = "https://google.com";
+            document.getElementById('auth-error').style.display = 'block';
         }
+    }
 
-        const days = ["日", "月", "火", "水", "木", "金", "土"];
-        document.getElementById('in-date').valueAsDate = new Date();
-
-        function update() {
-            const name = document.getElementById('in-name').value || "（宛名未入力）";
-            const price = Number(document.getElementById('in-price').value).toLocaleString();
-            const note = document.getElementById('in-note').value;
-            const dateVal = new Date(document.getElementById('in-date').value);
-            
-            // 偽造防止用ランダムハッシュ生成
-            const randomID = "ZN-" + Math.random().toString(36).substring(2, 12).toUpperCase();
-            const dateStr = `${dateVal.getFullYear()}年${dateVal.getMonth() + 1}月${dateVal.getDate()}日 (${days[dateVal.getDay()]})`;
-            
-            document.getElementById('out-name').innerText = name;
-            document.getElementById('out-price').innerText = price;
-            document.getElementById('out-note').innerText = note;
-            document.getElementById('out-date').innerText = dateStr;
-            document.getElementById('out-id').innerText = randomID;
-
-            const y = dateVal.getFullYear();
-            const m = String(dateVal.getMonth() + 1).padStart(2, '0');
-            const d = String(dateVal.getDate()).padStart(2, '0');
-            document.title = `${y}${m}${d}_${name}様_受領証`;
+    // ID生成
+    function generateID() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let result = 'ZN-';
+        for (let i = 0; i < 8; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
         }
+        return result;
+    }
 
-        // 2. 自動PDF保存エンジン
-        function downloadPDF() {
-            update();
-            const element = document.getElementById('receipt-pdf-area');
-            const opt = {
-                margin: 0,
-                filename: document.title + '.pdf',
-                image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
-        }
+    // 初期化
+    function initReceipt() {
+        const now = new Date();
+        const dateStr = now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
+        document.getElementById('display-date').innerText = dateStr;
+        document.getElementById('display-id').innerText = generateID();
+    }
 
-        update();
-    </script>
+    // リアルタイム反映
+    function updateReceipt() {
+        const name = document.getElementById('input-name').value;
+        const amount = document.getElementById('input-amount').value;
+        const purpose = document.getElementById('input-purpose').value;
+
+        document.getElementById('display-name').innerText = name || '＿＿＿＿＿＿＿＿＿＿';
+        document.getElementById('display-amount').innerText = amount ? Number(amount).toLocaleString() : '0';
+        document.getElementById('display-purpose').innerText = purpose || 'サービス利用料として';
+    }
+
+    // PDF生成
+    function generatePDF() {
+        const element = document.getElementById('receipt-canvas');
+        const name = document.getElementById('input-name').value || '名称未設定';
+        const date = new Date().toISOString().split('T')[0];
+        const filename = `${date}_${name}_受領証.pdf`;
+
+        const opt = {
+            margin: 0,
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 3, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save();
+    }
+
+    // Enterキーでログイン
+    document.getElementById('pass-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') checkAuth();
+    });
+</script>
 </body>
 </html>
