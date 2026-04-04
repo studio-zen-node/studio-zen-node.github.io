@@ -250,7 +250,7 @@
 <div class="controls">
     <input type="text" id="input-name" placeholder="宛名" oninput="updateReceipt()">
     <input type="number" id="input-amount" placeholder="金額" oninput="updateReceipt()">
-    <input type="text" id="input-purpose" placeholder="但書き" value="サービス利用料として" oninput="updateReceipt()">
+    <input type="text" id="input-purpose" placeholder="但書き" value="動画制作代金として" oninput="updateReceipt()">
     <button class="save-btn" onclick="generatePDF()">PDFを保存</button>
 </div>
 
@@ -324,7 +324,7 @@
 
         document.getElementById('display-name').innerText = name || '＿＿＿＿＿＿＿＿＿＿';
         document.getElementById('display-amount').innerText = amount ? Number(amount).toLocaleString() : '0';
-        document.getElementById('display-purpose').innerText = purpose || 'サービス利用料として';
+        document.getElementById('display-purpose').innerText = purpose || '動画制作代金として';
     }
 
     // PDF生成
