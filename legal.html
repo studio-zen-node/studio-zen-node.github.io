@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal | Studio Zen-Node</title>
+    <meta name="description" content="Studio Zen-Nodeの特定商取引法に基づく表記および利用規約。安心・安全な取引のためのガイドラインを掲載しています。">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ローディング画面の設定 (index共通) */
+        #loader {
+            position: fixed;
+            width: 100vw; height: 100vh;
+            top: 0; left: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .loader-content { width: 80%; max-width: 400px; text-align: center; }
+        .loader-logo { color: #fff; font-size: 1.2rem; font-weight: 900; letter-spacing: 6px; margin-bottom: 20px; text-transform: uppercase; }
+        .progress-container { width: 100%; height: 2px; background: #222; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
+        .progress-bar { width: 0%; height: 100%; background: #007bff; box-shadow: 0 0 15px #007bff; }
+        .loader-status { color: #444; font-size: 0.7rem; letter-spacing: 2px; font-family: monospace; }
+        #percent { color: #007bff; }
+        .loaded { opacity: 0 !important; visibility: hidden !important; }
+
+        /* リーガルページ専用スタイル */
+        .legal-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 3rem;
+        }
+        .legal-nav a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            border-bottom: 1px solid transparent;
+            transition: 0.3s;
+        }
+        .legal-nav a:hover { color: #007bff; border-bottom: 1px solid #007bff; }
+
+        .legal-box {
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid #222;
+            padding: 2rem;
+            border-radius: 4px;
+            margin-bottom: 4rem;
+        }
+        .legal-box h2 {
+            color: #007bff;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #007bff;
+            padding-left: 15px;
+        }
+        .legal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .legal-table th, .legal-table td {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid #222;
+            text-align: left;
+            vertical-align: top;
+        }
+        .legal-table th {
+            width: 30%;
+            color: #666;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .terms-content {
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 2;
+        }
+        .terms-item { margin-bottom: 2.5rem; }
+        .terms-item h3 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">Studio Zen-Node</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="bar"></div>
+            </div>
+            <div class="loader-status">SYSTEM LOADING... <span id="percent">0%</span></div>
+        </div>
+    </div>
+
+    <script src="menu.js"></script>
+
+    <div class="container">
+        <header style="text-align:center; padding: 6rem 0 2rem 0;">
+            <h1 style="font-size: clamp(2rem, 8vw, 3.5rem); color:#fff; margin:0; font-weight:900; letter-spacing: 5px;">
+                Legal Information
+            </h1>
+            <p style="letter-spacing:5px; color:#888; text-transform: uppercase; font-size: 0.7rem; margin-top: 10px;">
+                Compliance & Guidelines
+            </p>
+        </header>
+
+        <nav class="legal-nav">
+            <a href="#tokusho">SPECIFIED COMMERCIAL TRANSACTIONS</a>
+            <a href="#terms">TERMS OF SERVICE</a>
+        </nav>
+
+        <section id="tokusho" class="legal-box">
+            <h2>特定商取引法に基づく表記</h2>
+            <table class="legal-table">
+                <tr>
+                    <th>事業者名</th>
+                    <td>Studio Zen-Node</td>
+                </tr>
+                <tr>
+                    <th>運営責任者</th>
+                    <td>宮崎（代表）</td>
+                </tr>
+                <tr>
+                    <th>所在地</th>
+                    <td>長野県（詳細はご依頼確定時に遅滞なく開示いたします）</td>
+                </tr>
+                <tr>
+                    <th>連絡先</th>
+                    <td>miyazaki.ngn@gmail.com<br><span style="font-size: 0.8rem; color: #555;">※お問い合わせはメール、または公式サイトのフォームよりお願いいたします。</span></td>
+                </tr>
+                <tr>
+                    <th>販売価格</th>
+                    <td>各サービス、案件の規模により異なります。詳細は「Service」ページまたはお見積りをご確認ください。</td>
+                </tr>
+                <tr>
+                    <th>代金の支払方法</th>
+                    <td>Amazonギフト券 / 銀行振込</td>
+                </tr>
+                <tr>
+                    <th>支払時期</th>
+                    <td>原則として制作着手前の前払い制（大型案件等は別途協議）</td>
+                </tr>
+                <tr>
+                    <th>商品引渡し時期</th>
+                    <td>打ち合わせにて合意した納期までに、デジタルデータ（MP4等）のダウンロードリンク送付にて納品。</td>
+                </tr>
+                <tr>
+                    <th>返品・キャンセル</th>
+                    <td>デジタルコンテンツという性質上、制作開始後のキャンセル・返金には応じられません。ただし、当方の過失による不具合がある場合は無償修正にて対応いたします。※法的クーリング・オフ制度は通信販売には適用されません。</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="terms" class="legal-box">
+            <h2>利用規約</h2>
+            <div class="terms-content">
+                <div class="terms-item">
+                    <h3>第1条（著作権の帰属）</h3>
+                    <p>納品された映像作品の著作権は、原則としてStudio Zen-Nodeに帰属します。クライアント様には、合意された範囲内での二次利用・上映の権利を許諾します。自作発言、データの転売、無断での改変は禁止します。</p>
+                </div>
+                <div class="terms-item">
+                    <h3>第2条（キャンセル規定）</h3>
+                    <p>受注確定後のキャンセルについては、進捗状況に応じて以下のキャンセル料が発生します。<br>
+                    ・素材送付前：0%<br>
+                    ・構成案・絵コンテ作成後：50%<br>
+                    ・本編集着手後：100%</p>
+                </div>
+                <div class="terms-item">
+                    <h3>第3条（免責事項）</h3>
+                    <p>クライアント様より提供された素材（BGM、画像、動画等）が第三者の著作権を侵害していた場合、当方は一切の責任を負いません。権利関係の処理は事前にお願いいたします。</p>
+                </div>
+                <div class="terms-item">
+                    <h3>第4条（実績公開）</h3>
+                    <p>制作した作品は、当サイトのポートフォリオやSNSにて実績として公開させていただく場合がございます。非公開を希望される場合は、事前にお申し出ください。</p>
+                </div>
+            </div>
+        </section>
+
+        <section style="text-align: center; margin-top: 3rem;">
+            <a href="index.html" class="btn-home">Back to Home</a>
+        </nav>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 Studio Zen-Node | Legal Section
+    </div>
+
+    <script>
+        // ローディングアニメーション制御 (共通)
+        window.addEventListener('load', function() {
+            const bar = document.getElementById('bar');
+            const percent = document.getElementById('percent');
+            const loader = document.getElementById('loader');
+            let width = 0;
+
+            const interval = setInterval(function() {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loader.classList.add('loaded');
+                    }, 300);
+                } else {
+                    width += Math.floor(Math.random() * 15) + 5;
+                    if (width > 100) width = 100;
+                    if(bar) bar.style.width = width + '%';
+                    if(percent) percent.innerText = width + '%';
+                }
+            }, 50);
+        });
+
+        document.addEventListener('dragstart', e => e.preventDefault());
+    </script>
+</body>
+</html>
