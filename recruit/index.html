@@ -6,78 +6,101 @@
     <title>Recruit | Studio Zen-Node</title>
     <link rel="stylesheet" href="../style.css">
     <style>
-        /* 採用ページ専用のスタイル */
-        .recruit-wrapper {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 80vh; /* 画面中央に配置 */
-            text-align: center;
+        :root { --accent: #007bff; --bg-card: rgba(255, 255, 255, 0.02); --border: #222; }
+        .recruit-container { max-width: 800px; margin: 0 auto; padding: 100px 20px; color: #ccc; position: relative; z-index: 2; }
+        
+        section { margin-bottom: 80px; }
+        h2 { font-size: 1.5rem; color: var(--accent); letter-spacing: 5px; margin-bottom: 30px; border-left: 3px solid var(--accent); padding-left: 20px; text-transform: uppercase; }
+
+        .wing-logo { font-size: 3.5rem; text-align: center; margin-bottom: 50px; animation: wingFly 4s ease-in-out infinite; }
+        @keyframes wingFly { 
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; } 
+            50% { transform: translateY(-25px) scale(1.1); opacity: 1; } 
         }
 
-        /* 「羽ばたく」を表現するアニメーション */
-        .wing-icon {
-            font-size: 3rem;
-            color: #fff;
-            margin-bottom: 30px;
-            animation: wingFly 3s ease-in-out infinite;
-            opacity: 0.7;
-        }
+        .concept-box { background: var(--bg-card); border: 1px solid var(--border); padding: 40px; line-height: 2; margin-bottom: 50px; backdrop-filter: blur(10px); }
+        .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .role-card { border: 1px solid var(--border); padding: 25px; background: rgba(0,0,0,0.5); }
+        .role-card h3 { color: #fff; font-size: 1rem; margin-bottom: 10px; }
+        .role-card p { font-size: 0.85rem; color: #666; line-height: 1.6; }
 
-        .recruit-title {
-            font-size: clamp(2.5rem, 10vw, 4rem);
-            color: #fff;
-            font-weight: 900;
-            letter-spacing: 15px; /* 文字間隔を広く */
-            text-transform: uppercase;
-            margin: 0;
+        .status-banner { text-align: center; border: 1px dashed #444; padding: 40px; margin-top: 50px; background: rgba(255,255,255,0.01); }
+        
+        /* 指定された絶対パスでのホーム戻りボタン */
+        .btn-back-home { 
+            display: inline-block; margin-top: 60px; padding: 15px 40px; 
+            border: 1px solid #333; color: #888; text-decoration: none; 
+            letter-spacing: 3px; font-size: 0.8rem; transition: 0.3s;
         }
+        .btn-back-home:hover { border-color: var(--accent); color: #fff; background: rgba(0,123,255,0.1); }
 
-        .recruit-subtitle {
-            font-size: 0.8rem;
-            color: #444;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            margin-top: 15px;
-        }
-
-        /* 隠し要素（ホバー時に小さく表示） */
-        .status-note {
-            font-size: 0.7rem;
-            color: #222;
-            margin-top: 80px;
-            letter-spacing: 2px;
-            transition: 0.5s;
-        }
-        .recruit-wrapper:hover .status-note {
-            color: #555; /* ホバーで少し見えるように */
-        }
-
-        @keyframes wingFly {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
-            50% { transform: translateY(-15px) rotate(5deg); opacity: 1; }
-        }
+        #wing-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
     </style>
 </head>
 <body oncontextmenu="return false;">
-    
+
+    <canvas id="wing-canvas"></canvas>
+
     <script src="../menu.js"></script>
 
-    <div class="container">
-        <div class="recruit-wrapper">
-            <div class="wing-icon">🕊️</div> 
+    <div class="recruit-container">
+        <div class="wing-logo">🕊️</div>
+        
+        <header style="text-align: center; margin-bottom: 80px;">
+            <h1 style="font-size: 3rem; font-weight: 900; letter-spacing: 15px; color: #fff;">RECRUIT</h1>
+            <p style="color: #444; font-size: 0.7rem; letter-spacing: 5px; margin-top: 10px;">FUTURE PARTNERSHIP</p>
+        </header>
 
-            <h1 class="recruit-title">RECRUIT</h1>
-            <p class="recruit-subtitle">Future is Creation</p>
-            
-            <p class="status-note">Currently, not accepting applications.</p>
+        <section>
+            <h2>Philosophy</h2>
+            <div class="concept-box">
+                <p>
+                    <strong style="color:#fff; font-size:1.2rem;">「個の技術を、組織の飛躍へ。」</strong><br><br>
+                    Studio Zen-Nodeは、現在は代表による個人運営ですが、将来的には「映像・音響・情報工学」のスペシャリストが集うクリエイティブ・ギルドを目指しています。
+                    私たちが求めるのは、単に「ツールが使える」ことではなく、映像を通じて「何を解決するか」を共に考えられるパートナーです。
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Ideal Candidate</h2>
+            <div class="role-grid">
+                <div class="role-card">
+                    <h3>Visual Editor</h3>
+                    <p>意図を汲み取った「魅せる編集」ができる方。</p>
+                </div>
+                <div class="role-card">
+                    <h3>Motion Designer</h3>
+                    <p>テロップやロゴに命を吹き込むアニメーション制作ができる方。</p>
+                </div>
+                <div class="role-card">
+                    <h3>Frontend Engineer</h3>
+                    <p>映像とWebを高度に連携させる技術に興味がある方。</p>
+                </div>
+                <div class="role-card">
+                    <h3>Sound Designer</h3>
+                    <p>音を通じて映像の没入感を最大化できる方。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="status-banner">
+            <h3 style="color: var(--accent); letter-spacing: 3px;">CURRENT STATUS: CLOSED</h3>
+            <p style="font-size: 0.9rem; color: #888; margin-top: 15px; line-height: 1.8;">
+                現在、新規メンバーの募集は行っておりません。<br>
+                体制が整い次第、本ページにて告知いたします。<br>
+                共に羽ばたける日を、心待ちにしております。
+            </p>
+        </section>
+
+        <div style="text-align: center;">
+            <a href="https://studio-zen-node.github.io/index.html" class="btn-back-home">← BACK TO HOME</a>
         </div>
     </div>
 
-    <div class="footer">
-        &copy; 2026 Studio Zen-Node
-    </div>
+    <script src="recruit.js"></script>
+
+    <div class="footer">&copy; 2026 Studio Zen-Node</div>
 
 </body>
 </html>
