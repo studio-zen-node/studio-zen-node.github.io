@@ -45,4 +45,3 @@ if (ctrlKey && e.key === 's') {
 
 });
 
-補足
