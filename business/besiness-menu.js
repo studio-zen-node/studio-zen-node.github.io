@@ -46,9 +46,10 @@
     `;
     document.head.appendChild(style);
 
-    // 2. メニュー項目の設定（Homeを先頭に配置）
+    // 2. メニュー項目の設定（すべて絶対パスに統一）
     const items = [
         { name: "Home", sub: "トップページへ戻る", link: "https://studio-zen-node.github.io/index.html" },
+        { name: "Profile", sub: "事業概要", link: "https://studio-zen-node.github.io/business/profile.html" },
         { name: "Service", sub: "制作プラン（法人様）", link: "https://studio-zen-node.github.io/business/service.html" },
         { name: "Personal", sub: "制作プラン（個人様）", link: "https://studio-zen-node.github.io/service.html" },
         { name: "Recruit", sub: "採用情報・理念", link: "https://studio-zen-node.github.io/recruit/index.html" },
