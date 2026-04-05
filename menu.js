@@ -19,6 +19,7 @@ const navHTML = `
 <li><a href="/business/index.html">Business<span>企業様へ (JP)</span></a></li>
 <li><a href="/business/en/index.html">Business<span>Corporate (EN)</span></a></li>
 <li><a href="/recruit/index.html">Recruit<span>採用情報</span></a></li>
+<li><a href="payment.html">Payment<span>お支払い方法</span></a></li>
 </ul>
 </div>
 </nav>
