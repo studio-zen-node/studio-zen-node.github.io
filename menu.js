@@ -29,8 +29,7 @@ const navHTML = `
 document.body.insertAdjacentHTML('afterbegin', navHTML);
 
 // 2. セキュリティとUXのバランス
-// 右クリック禁止やドラッグ禁止は、ユーザーが不便を感じるため削除を推奨しますが、
-// どうしても画像保護が必要な場合はCSS（user-select: noneやpointer-events: none）での対応を検討してください。
+
 
 // 3. ショートカット制限（必要最小限に留める）
 document.addEventListener('keydown', function(e) {
