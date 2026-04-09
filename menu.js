@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {　
 
 // 1. ナビゲーションメニューの生成
 const navHTML = `
