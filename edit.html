@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Edit Experience | Studio Zen-Node</title>
+<style>
+:root {
+--bg: #000000;
+--panel: #0a0a0a;
+--accent: #007bff;
+--text: #ffffff;
+--text-dim: #666666;
+--border: #222222;
+}
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        letter-spacing: 0.05em;
+    }
+
+    header {
+        padding: 15px 20px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+        font-size: 11px;
+        font-weight: 900;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0,0,0,0.8);
+        backdrop-filter: blur(10px);
+        z-index: 10;
+    }
+
+    .header-logo {
+        color: var(--accent);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    #main-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+        position: relative;
+    }
+
+    #preview-monitor {
+        width: 100%;
+        max-width: 600px;
+        aspect-ratio: 16 / 9;
+        background-color: #050505;
+        border: 1px solid var(--border);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 0 40px rgba(0, 123, 255, 0.05);
+    }
+
+    #preview-monitor video, #preview-monitor img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: filter 0.3s ease;
+    }
+
+    #overlay-logo {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 9px;
+        font-weight: bold;
+        border: 1px solid rgba(255,255,255,0.4);
+        padding: 3px 6px;
+        letter-spacing: 2px;
+        opacity: 0.6;
+        display: none;
+        pointer-events: none;
+        background: rgba(0,0,0,0.3);
+        z-index: 5;
+    }
+
+    #ui-panel {
+        background-color: var(--panel);
+        padding: 24px 20px 40px 20px;
+        border-top: 1px solid var(--border);
+        border-radius: 24px 24px 0 0;
+        box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+    }
+
+    .step-container {
+        display: none;
+        animation: slideUp 0.4s cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    .step-container.active {
+        display: block;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .step-info {
+        font-size: 10px;
+        color: var(--accent);
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .btn-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    button, .file-label {
+        background-color: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        -webkit-tap-highlight-color: transparent;
+        text-decoration: none;
+    }
+
+    button:active {
+        background-color: var(--accent);
+        border-color: var(--accent);
+        transform: scale(0.96);
+    }
+
+    .primary-btn {
+        width: 100%;
+        margin-top: 25px;
+        background-color: var(--accent);
+        border: none;
+        font-weight: 800;
+        color: #fff;
+        padding: 18px;
+        font-size: 14px;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    #export-layer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--bg);
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+    }
+
+    .progress-box {
+        width: 200px;
+        height: 2px;
+        background-color: var(--border);
+        margin: 40px 0;
+        position: relative;
+    }
+
+    .progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0%;
+        background-color: var(--accent);
+        box-shadow: 0 0 15px var(--accent);
+    }
+
+    #export-options {
+        display: none;
+        width: 85%;
+        max-width: 400px;
+        text-align: center;
+    }
+
+    .status-badge {
+        font-size: 9px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+</style>
+</head>
+<body>
+
+<header>
+<a href="https://studio-zen-node.github.io/index.html" class="header-logo">
+STUDIO ZEN-NODE
+</a>
+<div class="status-badge" id="runtime-status">STANDBY</div>
+</header>
+
+<div id="main-container">
+<div id="preview-monitor">
+<div id="placeholder" style="color:#222; font-size:10px; text-align:center;">
+SYSTEM READY
+
+
+INSERT MEDIA TO BEGIN
+</div>
+<div id="overlay-logo">STUDIO ZEN-NODE</div>
+</div>
+</div>
+
+<div id="ui-panel">
+<div id="step1" class="step-container active">
+<div class="step-header">
+<span class="step-info">Task 01</span>
+<span style="font-size:12px">MEDIA_IMPORT</span>
+</div>
+<label for="file-upload" class="file-label" style="display: block; border: 1px dashed var(--accent);">
+SELECT VIDEO OR PHOTO
+</label>
+<input type="file" id="file-upload" accept="video/,image/">
+<button class="primary-btn" id="to-step2" onclick="nextStep(2)">INITIALIZE EDIT</button>
+</div>
+
+<div id="step2" class="step-container">
+    <div class="step-header">
+        <span class="step-info">Task 02</span>
+        <span style="font-size:12px">COLOR_GRADING</span>
+    </div>
+    <div class="btn-grid">
+        <button onclick="applyFilter('none')">RAW</button>
+        <button onclick="applyFilter('grayscale(1) contrast(1.2)')">MONO</button>
+        <button onclick="applyFilter('sepia(0.8) brightness(0.9)')">VINTAGE</button>
+        <button onclick="applyFilter('hue-rotate(280deg) saturate(1.5)')">CYBER</button>
+    </div>
+    <button class="primary-btn" onclick="nextStep(3)">PROCEED TO FINISH</button>
+</div>
+
+<div id="step3" class="step-container">
+    <div class="step-header">
+        <span class="step-info">Task 03</span>
+        <span style="font-size:12px">COMPOSITION</span>
+    </div>
+    <div class="btn-grid">
+        <button onclick="updateLogo(true)">OVERLAY ON</button>
+        <button onclick="updateLogo(false)">OFF</button>
+    </div>
+    <button class="primary-btn" onclick="triggerExport()">EXPORT PROJECT</button>
+</div>
+</div>
+
+<div id="export-layer">
+<div class="status-badge" id="export-label">ENCODING ASSETS...</div>
+<div class="progress-box" id="pb-container">
+<div id="progress-bar" class="progress-bar"></div>
+</div>
+
+<div id="export-options">
+    <button onclick="saveFile('znproj')" style="width: 100%; margin-bottom: 12px; border-color: var(--accent);">DOWNLOAD PROJECT (.znproj)</button>
+    <button onclick="saveFile('mp4')" style="width: 100%; margin-bottom: 25px;">DOWNLOAD VIDEO (.mp4)</button>
+    <button class="primary-btn" onclick="location.href='[https://studio-zen-node.github.io/index.html](https://studio-zen-node.github.io/index.html)'">BACK TO HOME</button>
+</div>
+</div>
+
+<script>
+const fileIn = document.getElementById('file-upload');
+const monitor = document.getElementById('preview-monitor');
+const logo = document.getElementById('overlay-logo');
+const runtimeStatus = document.getElementById('runtime-status');
+let activeMedia = null;
+let originalFile = null;
+let currentFilter = 'none';
+
+// 起動時に保存された設定を復元
+window.addEventListener(&#39;load&#39;, () =&gt; {
+    const savedFilter = localStorage.getItem(&#39;zn_filter&#39;);
+    const savedLogo = localStorage.getItem(&#39;zn_logo&#39;);
+    if (savedFilter || savedLogo) {
+        currentFilter = savedFilter || &#39;none&#39;;
+        if (savedLogo === &#39;true&#39;) logo.style.display = &#39;block&#39;;
+        runtimeStatus.innerText = &#39;RESTORED&#39;;
+    }
+});
+
+fileIn.onchange = (e) =&gt; {
+    const file = e.target.files[0];
+    if(!file) return;
+    originalFile = file;
+    
+    document.getElementById(&#39;placeholder&#39;).style.display = &#39;none&#39;;
+    if(activeMedia) monitor.removeChild(activeMedia);
+
+    const url = URL.createObjectURL(file);
+    if(file.type.startsWith(&#39;video/&#39;)) {
+        activeMedia = document.createElement(&#39;video&#39;);
+        activeMedia.src = url; activeMedia.autoplay = true; activeMedia.loop = true; activeMedia.muted = true; activeMedia.playsInline = true;
+    } else {
+        activeMedia = document.createElement(&#39;img&#39;);
+        activeMedia.src = url;
+    }
+    
+    // 保存されていたフィルターを即座に適用
+    activeMedia.style.filter = currentFilter;
+    monitor.appendChild(activeMedia);
+    runtimeStatus.innerText = &#39;LINKED&#39;;
+};
+
+function nextStep(n) {
+    document.querySelectorAll(&#39;.step-container&#39;).forEach(s =&gt; s.classList.remove(&#39;active&#39;));
+    document.getElementById(&#39;step&#39;+n).classList.add(&#39;active&#39;);
+}
+
+function applyFilter(f) {
+    currentFilter = f;
+    if(activeMedia) activeMedia.style.filter = f;
+    localStorage.setItem(&#39;zn_filter&#39;, f);
+    runtimeStatus.innerText = &#39;GRADED&#39;;
+}
+
+function updateLogo(show) {
+    const state = show ? &#39;block&#39; : &#39;none&#39;;
+    logo.style.display = state;
+    localStorage.setItem(&#39;zn_logo&#39;, show);
+    runtimeStatus.innerText = show ? &#39;WATERMARKED&#39; : &#39;CLEAN&#39;;
+}
+
+function triggerExport() {
+    const layer = document.getElementById(&#39;export-layer&#39;);
+    const bar = document.getElementById(&#39;progress-bar&#39;);
+    layer.style.display = &#39;flex&#39;;
+    
+    let p = 0;
+    const timer = setInterval(() =&gt; {
+        p += Math.random() * 6;
+        if(p &gt;= 100) {
+            clearInterval(timer);
+            bar.style.width = &#39;100%&#39;;
+            document.getElementById(&#39;export-label&#39;).innerText = &#39;RENDER COMPLETE&#39;;
+            document.getElementById(&#39;pb-container&#39;).style.display = &#39;none&#39;;
+            document.getElementById(&#39;export-options&#39;).style.display = &#39;block&#39;;
+        } else {
+            bar.style.width = p + &#39;%&#39;;
+        }
+    }, 50);
+}
+
+function saveFile(ext) {
+    let blob, fileName;
+    if(ext === &#39;znproj&#39;) {
+        const projectData = {
+            app: &quot;Studio Zen-Node&quot;,
+            config: { filter: currentFilter, logo: logo.style.display === &#39;block&#39; },
+            sourceName: originalFile ? originalFile.name : &#39;unknown&#39;,
+            exportedAt: new Date().toISOString()
+        };
+        blob = new Blob([JSON.stringify(projectData, null, 2)], {type: &#39;application/json&#39;});
+        fileName = &quot;zen_node_project.znproj&quot;;
+    } else {
+        // 元のファイルがあればそれを、なければダミーをMP4としてDL
+        blob = originalFile || new Blob([], {type:&#39;video/mp4&#39;});
+        fileName = &quot;zen_node_export.mp4&quot;;
+    }
+    
+    const link = document.createElement(&#39;a&#39;);
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+}
+</script>
+
+</body>
+</html>
