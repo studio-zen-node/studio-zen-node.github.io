@@ -12,6 +12,7 @@ const navHTML = `
 <li><a href="/index.html">Home<span>トップページ</span></a></li>
 <li><a href="/works.html">Works<span>制作実績</span></a></li>
 <li><a href="/blog.html">Blog<span>技術・制作ログ</span></a></li>
+</li><a href="experience.html" class="btn">体験ページへ</a>
 <li><a href="/service.html">Service<span>ご依頼・料金</span></a></li>
 <li><a href="/env.html">Environment<span>制作環境</span></a></li>
 <li><a href="/terms.html">Terms<span>利用規約</span></a></li>
