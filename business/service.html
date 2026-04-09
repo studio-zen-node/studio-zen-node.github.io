@@ -8,6 +8,8 @@
     <style>
         :root { --accent: #007bff; --bg: #000; --card-bg: #0a0a0a; --border: #222; }
         body { background: var(--bg); color: #ccc; margin: 0; font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; overflow-x: hidden; }
+        
+        /* コンテナ */
         .container { max-width: 900px; margin: 0 auto; padding: 120px 20px; position: relative; z-index: 2; }
 
         h2 { font-size: 1.5rem; color: #fff; letter-spacing: 4px; margin-bottom: 40px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
@@ -119,14 +121,17 @@
         }
         .btn-action:hover { opacity: 0.8; transform: scale(1.05); }
 
+        /* 背景キャンバス */
         #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.3; }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.2rem !important; }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <canvas id="bg-canvas"></canvas>
-
-    <script src="../recruit/recruit-menu.js"></script>
 
     <div class="container">
         <header style="text-align: center; margin-bottom: 100px;">
@@ -197,7 +202,9 @@
         </div>
     </div>
 
-  <script src="./business-menu.js"></script>
+    <script src="../recruit/recruit.js"></script>
+
+    <script src="./business-menu.js"></script>
 
     <div class="footer" style="text-align: center; padding: 60px 0; color: #222; font-size: 0.8rem;">
         &copy; 2026 Studio Zen-Node | Student-Led Creative Studio
