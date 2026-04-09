@@ -1,87 +1,375 @@
-<!DOCTYPE html>　
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Corporate Profile | Studio Zen-Node</title>
-    <link rel="stylesheet" href="../../style.css"> <style>
-        :root { --accent: #007bff; --bg-card: rgba(255, 255, 255, 0.02); --border: #222; }
-        .biz-page { max-width: 900px; margin: 0 auto; padding: 100px 20px; color: #ccc; }
-        section { margin-bottom: 100px; }
-        h2 { font-size: 1.5rem; color: var(--accent); letter-spacing: 5px; border-left: 3px solid var(--accent); padding-left: 20px; margin-bottom: 40px; text-transform: uppercase; }
-        .vision-box { background: var(--bg-card); border: 1px solid var(--border); padding: 50px; }
-        .vision-box h3 { color: #fff; font-size: 1.8rem; margin-bottom: 30px; line-height: 1.5; }
-        .vision-box p { line-height: 2; font-size: 0.95rem; margin-bottom: 20px; }
-        .signature { text-align: right; font-size: 1.1rem; color: #fff; margin-top: 40px; font-weight: bold; }
+    <title>Business Hub | Studio Zen-Node</title>
+    <style>
+        :root {
+            --accent: #007bff;
+            --bg: #000;
+            --card-bg: #0a0a0a;
+            --border: #222;
+            --text-muted: #888;
+            --text-main: #ccc;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- Background Canvas --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* --- Hamburger Menu --- */
+        .menu-btn {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 1000;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .menu-btn span {
+            width: 25px;
+            height: 2px;
+            background: #fff;
+            margin: 3px 0;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .menu-btn.active span:nth-child(2) { opacity: 0; transform: translateX(20px); }
+        .menu-btn.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.5s;
+        }
+
+        .nav-overlay.active { opacity: 1; visibility: visible; }
+
+        .nav-list { list-style: none; text-align: center; padding: 0; }
+        .nav-list li { margin: 30px 0; }
+        .nav-list a {
+            color: #fff;
+            text-decoration: none;
+            font-size: clamp(1.5rem, 8vw, 2.5rem);
+            font-weight: 900;
+            letter-spacing: 5px;
+            transition: 0.3s;
+            display: block;
+        }
+        .nav-list a:hover { color: var(--accent); transform: scale(1.1); }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 120px 5%;
+            position: relative;
+            z-index: 2;
+        }
+
+        header { text-align: center; margin-bottom: 150px; }
+        header h1 { font-size: clamp(2rem, 10vw, 4rem); font-weight: 900; letter-spacing: 0.3em; color: #fff; margin: 0; }
+        header p { color: var(--accent); letter-spacing: 0.5em; font-size: clamp(0.6rem, 2.5vw, 0.8rem); margin-top: 20px; text-transform: uppercase; }
+
+        section { margin-bottom: 140px; scroll-margin-top: 100px; opacity: 0; transform: translateY(30px); }
+        h2 { font-size: 1.5rem; color: #fff; letter-spacing: 6px; margin-bottom: 50px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 25px; text-transform: uppercase; }
+
+        /* --- Section Design --- */
+        .vision-box { 
+            background: rgba(255, 255, 255, 0.02); 
+            border: 1px solid var(--border); 
+            padding: clamp(30px, 6vw, 60px); 
+            backdrop-filter: blur(10px); 
+            border-radius: 4px;
+        }
+        .vision-box h3 { color: #fff; font-size: clamp(1.2rem, 5vw, 2.2rem); margin-bottom: 30px; line-height: 1.6; }
+        .vision-box p { line-height: 2.2; font-size: 1rem; color: #aaa; }
+
         .profile-table { width: 100%; border-collapse: collapse; }
-        .profile-table th, .profile-table td { padding: 25px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
-        .profile-table th { width: 30%; color: #666; font-weight: normal; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
-        .profile-table td { font-size: 1rem; line-height: 1.8; }
-        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .card-item { background: var(--bg-card); border: 1px solid var(--border); padding: 30px; }
-        .card-item h4 { color: #fff; margin-bottom: 15px; border-bottom: 1px solid var(--accent); display: inline-block; padding-bottom: 5px; }
-        .card-item p { font-size: 0.85rem; color: #888; line-height: 1.7; }
-        .contact-info { background: #050505; border: 1px solid var(--accent); padding: 40px; text-align: center; }
-        .btn-inquiry { display: block; background: var(--accent); color: #fff; text-decoration: none; padding: 20px; margin-top: 40px; font-weight: bold; letter-spacing: 5px; text-transform: uppercase; }
-        @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } }
+        .profile-table th, .profile-table td { padding: 25px; border-bottom: 1px solid var(--border); text-align: left; display: block; width: 100%; box-sizing: border-box; }
+        .profile-table th { color: #555; font-size: 0.75rem; letter-spacing: 3px; border-bottom: none; text-transform: uppercase; }
+        .profile-table td { font-size: 1.1rem; color: #eee; padding-top: 0; }
+
+        @media (min-width: 768px) {
+            .profile-table th, .profile-table td { display: table-cell; vertical-align: top; padding-top: 25px; }
+            .profile-table th { width: 30%; border-bottom: 1px solid var(--border); }
+        }
+
+        /* --- Service Cards --- */
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .price-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            border-left: 5px solid var(--accent); 
+            border-radius: 12px; 
+            padding: 40px; 
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            position: relative;
+            overflow: hidden;
+        }
+        .price-card:hover { transform: translateY(-15px); background: #111; border-color: #333; }
+        .price-card::after {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transform: rotate(45deg); transition: 0.6s;
+        }
+        .price-card:hover::after { left: 120%; }
+
+        .plan-name { color: var(--accent); font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; display: block; letter-spacing: 2px; }
+        .price-value { font-size: 2.5rem; color: #fff; font-weight: 900; }
+        .price-unit { font-size: 0.9rem; color: #555; margin-left: 8px; }
+        .plan-details { list-style: none; padding: 0; margin-top: 30px; font-size: 0.9rem; color: var(--text-muted); line-height: 2.5; }
+        .plan-details li::before { content: "✓"; color: var(--accent); margin-right: 12px; font-weight: bold; }
+
+        /* --- Contact --- */
+        .contact-selection { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .contact-card { padding: 50px 30px; text-align: center; border-radius: 12px; border: 1px solid var(--border); background: #050505; transition: 0.4s; }
+        .biz-card { border-color: var(--accent); background: rgba(0, 123, 255, 0.02); }
+        
+        .btn-action {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 18px 40px;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 123, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+        }
+
+        .footer { text-align: center; padding: 100px 0; color: #222; font-size: 0.8rem; letter-spacing: 3px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
-    <script src="../../menu.js"></script>
-    <div class="biz-page">
-        <header style="text-align: center; margin-bottom: 120px;">
-            <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: 15px; color: #fff;">BUSINESS</h1>
-            <p style="color: var(--accent); letter-spacing: 8px; font-size: 0.7rem; margin-top: 15px;">Studio Zen-Node Official Profile</p>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="menu-btn" id="menuToggle">
+        <span></span><span></span><span></span>
+    </div>
+
+    <nav class="nav-overlay" id="navOverlay">
+        <ul class="nav-list">
+            <li><a href="#vision">PHILOSOPHY</a></li>
+            <li><a href="#profile">PROFILE</a></li>
+            <li><a href="#service">SERVICE</a></li>
+            <li><a href="#contact">CONTACT</a></li>
+            <li><a href="../index.html" style="font-size: 1rem; color: #444; margin-top: 50px;">BACK TO TOP</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>BUSINESS</h1>
+            <p>Creative Technology Hub</p>
         </header>
 
         <section id="vision">
-            <h2>Vision & Message</h2>
+            <h2>Philosophy</h2>
             <div class="vision-box">
-                <h3>Beyond Imagination,<br>Powered by Technology.</h3>
-                <p>Studio Zen-Node was established to merge the logic of information engineering with the creative spirit of video production. We build "visual solutions" that maximize our clients' value by utilizing the latest AI technologies and advanced editing workflows.</p>
-                <div class="signature">Representative, Studio Zen-Node</div>
+                <h3>Beyond Imagination,<br>Empowered by Technology.</h3>
+                <p>Studio Zen-Node was founded to merge the logic of information engineering with the creative spirit of video production. By leveraging the latest AI technologies and advanced post-production workflows, we build "visual solutions" that maximize our clients' value. We deliver next-generation creativity through exceptional cost-performance and student-driven innovation.</p>
             </div>
         </section>
 
         <section id="profile">
-            <h2>Overview</h2>
+            <h2>Corporate Profile</h2>
             <table class="profile-table">
                 <tr><th>Trade Name</th><td>Studio Zen-Node</td></tr>
-                <tr><th>Representative</th><td>Representative</td></tr>
                 <tr><th>Location</th><td>Nagano, Japan</td></tr>
-                <tr><th>Established</th><td>March 27, 2026</td></tr>
-                <tr><th>Capital</th><td>Self-funded (Unregistered Individual Business)</td></tr>
-                <tr><th>Services</th><td>Digital Video Editing, Motion Graphics, Web Front-end Development</td></tr>
+                <tr><th>Founded</th><td>March 27, 2026</td></tr>
+                <tr><th>Business</th><td>Video Production, Post-Production, Web Development, IT Solution Support</td></tr>
+                <tr><th>Type</th><td>Student-Led Creative Studio (Information Engineering Dept.)</td></tr>
             </table>
         </section>
 
-        <section id="services">
-            <h2>Services</h2>
-            <div class="grid-layout">
-                <div class="card-item">
-                    <h4>Post-Production</h4>
-                    <p>By focusing exclusively on editing using client-provided footage, we provide high-quality production at a competitive cost.</p>
+        <section id="service">
+            <h2>Price Guide</h2>
+            <div class="price-grid">
+                <div class="price-card">
+                    <span class="plan-name">Short Movie</span>
+                    <div class="price-value">$5<span class="price-unit">/ Under 1 min</span></div>
+                    <ul class="plan-details">
+                        <li>SNS Ads / Shorts / TikTok / Reels</li>
+                        <li>Full Subtitles, BGM, & SE Included</li>
+                        <li style="color: #00ff00; font-weight: bold;">Unlimited Revisions (Free)</li>
+                        <li>Turnaround: From 3 days</li>
+                    </ul>
                 </div>
-                <div class="card-item">
-                    <h4>Works</h4>
-                    <p>Leveraging expertise gained from school events and festivals, we provide rapid and dramatic visual storytelling.</p>
+
+                <div class="price-card">
+                    <span class="plan-name">Standard Edit</span>
+                    <div class="price-value">$10<span class="price-unit">/ Under 5 min</span></div>
+                    <ul class="plan-details">
+                        <li>YouTube Content / Corporate Promos</li>
+                        <li>Color Grading & Sound Optimization</li>
+                        <li style="color: #00ff00; font-weight: bold;">Unlimited Revisions (Free)</li>
+                        <li>Turnaround: Within 7 days</li>
+                    </ul>
                 </div>
             </div>
         </section>
 
         <section id="contact">
-            <h2>Contact & Access</h2>
-            <div class="contact-info">
-                <strong>Online & Worldwide</strong>
-                <p>We operate as a fully online studio. We do not offer on-site filming; we accept requests worldwide via digital data transfer.</p>
-                <p style="color: #fff; font-weight: bold;">Payment: Amazon Gift Card Only</p>
-                <p style="color: #666; font-size: 0.85rem; margin-top:20px;">
-                    Email: miyazaki.ngn@gmail.com<br>
-                    Available Hours: TBD (By Appointment)
-                </p>
-                <a href="../../service.html" class="btn-inquiry">Inquiry</a>
+            <h2>Contact</h2>
+            <div class="contact-selection">
+                <div class="contact-card biz-card">
+                    <h3 style="color: #fff; margin-bottom: 20px;">For Business</h3>
+                    <p style="font-size: 0.85rem; color: #777; line-height: 1.8;">For corporate inquiries, estimates, or official orders, please contact our business desk via email.</p>
+                    <a href="mailto:miyazaki.ngn@gmail.com" class="btn-action">SEND E-MAIL</a>
+                </div>
+
+                <div class="contact-card">
+                    <h3 style="color: #fff; margin-bottom: 20px;">For Personal</h3>
+                    <p style="font-size: 0.85rem; color: #777; line-height: 1.8;">Requests for individual creators or personal projects are accepted through our dedicated portal.</p>
+                    <a href="https://studio-zen-node.github.io/service.html" class="btn-action" style="background: transparent; border: 1px solid var(--accent);">VISIT SITE</a>
+                </div>
             </div>
         </section>
     </div>
+
+    <footer class="footer">
+        &copy; 2026 Studio Zen-Node | Student-Led Creative Studio
+    </footer>
+
+    <script>
+        // --- 1. Background Particle Animation ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 70;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() { this.init(); }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.size = Math.random() * 1.5;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 123, 255, 0.4)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.update();
+                p.draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = p.x - particles[j].x;
+                    const dy = p.y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 123, 255, ${0.15 - dist / 1000})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- 2. Scroll Fade-in ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+        // --- 3. Menu Control ---
+        const menuBtn = document.getElementById('menuToggle');
+        const navOverlay = document.getElementById('navOverlay');
+
+        menuBtn.addEventListener('click', () => {
+            const active = menuBtn.classList.toggle('active');
+            navOverlay.classList.toggle('active');
+            document.body.style.overflow = active ? 'hidden' : 'auto';
+        });
+
+        navOverlay.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                navOverlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+    </script>
 </body>
 </html>
