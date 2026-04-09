@@ -3,80 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Corporate Profile | Studio Zen-Node</title>
-    <link rel="stylesheet" href="../style.css">
+    <title>Business Hub | Studio Zen-Node</title>
     <style>
-        :root { --accent: #007bff; --bg-card: rgba(255, 255, 255, 0.02); --border: #222; }
-        body { background: #000; color: #ccc; margin: 0; font-family: sans-serif; overflow-x: hidden; }
-        
-        /* コンテナの幅をレスポンシブに */
-        .biz-page { max-width: 900px; margin: 0 auto; padding: 120px 5%; position: relative; z-index: 2; }
-        section { margin-bottom: 80px; }
-        
-        /* タイトルサイズを可変に */
-        header h1 { font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 900; letter-spacing: 0.2em; color: #fff; margin: 0; text-align: center; }
-        header p { color: var(--accent); letter-spacing: 0.3em; font-size: clamp(0.6rem, 2vw, 0.75rem); margin-top: 15px; text-align: center; }
+        :root {
+            --accent: #007bff;
+            --bg: #000;
+            --card-bg: #0a0a0a;
+            --border: #222;
+            --text-muted: #888;
+            --text-main: #ccc;
+        }
 
-        h2 { font-size: 1.5rem; color: var(--accent); letter-spacing: 5px; border-left: 3px solid var(--accent); padding-left: 20px; margin-bottom: 40px; text-transform: uppercase; }
-        
-        .vision-box { background: var(--bg-card); border: 1px solid var(--border); padding: clamp(20px, 5vw, 50px); backdrop-filter: blur(5px); }
-        .vision-box h3 { color: #fff; font-size: clamp(1.2rem, 4vw, 1.8rem); margin-bottom: 30px; line-height: 1.5; }
-        .vision-box p { line-height: 2; font-size: 0.95rem; margin-bottom: 20px; }
-        
-        /* テーブルをスマホで縦並びにする対応 */
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- 背景 Canvas --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* --- ハンバーガーメニュー --- */
+        .menu-btn {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 1000;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .menu-btn span {
+            width: 25px;
+            height: 2px;
+            background: #fff;
+            margin: 3px 0;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .menu-btn.active span:nth-child(2) { opacity: 0; transform: translateX(20px); }
+        .menu-btn.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.5s;
+        }
+
+        .nav-overlay.active { opacity: 1; visibility: visible; }
+
+        .nav-list { list-style: none; text-align: center; padding: 0; }
+        .nav-list li { margin: 30px 0; }
+        .nav-list a {
+            color: #fff;
+            text-decoration: none;
+            font-size: clamp(1.5rem, 8vw, 2.5rem);
+            font-weight: 900;
+            letter-spacing: 5px;
+            transition: 0.3s;
+            display: block;
+        }
+        .nav-list a:hover { color: var(--accent); transform: scale(1.1); }
+
+        /* --- レイアウト構造 --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 120px 5%;
+            position: relative;
+            z-index: 2;
+        }
+
+        header { text-align: center; margin-bottom: 150px; }
+        header h1 { font-size: clamp(2rem, 10vw, 4rem); font-weight: 900; letter-spacing: 0.3em; color: #fff; margin: 0; }
+        header p { color: var(--accent); letter-spacing: 0.5em; font-size: clamp(0.6rem, 2.5vw, 0.8rem); margin-top: 20px; text-transform: uppercase; }
+
+        section { margin-bottom: 140px; scroll-margin-top: 100px; opacity: 0; transform: translateY(30px); }
+        h2 { font-size: 1.5rem; color: #fff; letter-spacing: 6px; margin-bottom: 50px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 25px; text-transform: uppercase; }
+
+        /* --- セクションデザイン --- */
+        .vision-box { 
+            background: rgba(255, 255, 255, 0.02); 
+            border: 1px solid var(--border); 
+            padding: clamp(30px, 6vw, 60px); 
+            backdrop-filter: blur(10px); 
+            border-radius: 4px;
+        }
+        .vision-box h3 { color: #fff; font-size: clamp(1.2rem, 5vw, 2.2rem); margin-bottom: 30px; line-height: 1.6; }
+        .vision-box p { line-height: 2.2; font-size: 1rem; color: #aaa; }
+
         .profile-table { width: 100%; border-collapse: collapse; }
-        .profile-table th, .profile-table td { padding: 20px; border-bottom: 1px solid var(--border); text-align: left; display: block; width: 100%; box-sizing: border-box; }
-        .profile-table th { color: #666; font-size: 0.7rem; letter-spacing: 2px; padding-bottom: 5px; border-bottom: none; }
-        .profile-table td { font-size: 1rem; color: #eee; padding-top: 5px; }
+        .profile-table th, .profile-table td { padding: 25px; border-bottom: 1px solid var(--border); text-align: left; display: block; width: 100%; box-sizing: border-box; }
+        .profile-table th { color: #555; font-size: 0.75rem; letter-spacing: 3px; border-bottom: none; }
+        .profile-table td { font-size: 1.1rem; color: #eee; padding-top: 0; }
 
         @media (min-width: 768px) {
-            .profile-table th, .profile-table td { display: table-cell; vertical-align: top; }
+            .profile-table th, .profile-table td { display: table-cell; vertical-align: top; padding-top: 25px; }
             .profile-table th { width: 30%; border-bottom: 1px solid var(--border); }
         }
 
-        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 768px) { .grid-layout { grid-template-columns: 1fr 1fr; } }
+        /* --- サービス・料金カード --- */
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .price-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            border-left: 5px solid var(--accent); 
+            border-radius: 12px; 
+            padding: 40px; 
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            position: relative;
+            overflow: hidden;
+        }
+        .price-card:hover { transform: translateY(-15px); background: #111; border-color: #333; }
+        .price-card::after {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transform: rotate(45deg); transition: 0.6s;
+        }
+        .price-card:hover::after { left: 120%; }
 
-        .card-item { background: var(--bg-card); border: 1px solid var(--border); padding: 30px; }
+        .plan-name { color: var(--accent); font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; display: block; letter-spacing: 2px; }
+        .price-value { font-size: 2.5rem; color: #fff; font-weight: 900; }
+        .price-unit { font-size: 0.9rem; color: #555; margin-left: 8px; }
+        .plan-details { list-style: none; padding: 0; margin-top: 30px; font-size: 0.9rem; color: var(--text-muted); line-height: 2.5; }
+        .plan-details li::before { content: "✓"; color: var(--accent); margin-right: 12px; font-weight: bold; }
+
+        /* --- 問い合わせ --- */
+        .contact-selection { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .contact-card { padding: 50px 30px; text-align: center; border-radius: 12px; border: 1px solid var(--border); background: #050505; transition: 0.4s; }
+        .biz-card { border-color: var(--accent); background: rgba(0, 123, 255, 0.02); }
         
-        .contact-info { background: #050505; border: 1px solid var(--accent); padding: 30px; text-align: center; }
-        .btn-inquiry { display: block; background: var(--accent); color: #fff; text-decoration: none; padding: 20px; margin-top: 40px; font-weight: bold; letter-spacing: 3px; transition: 0.3s; }
+        .btn-action {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 18px 40px;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 123, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+        }
 
-        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.3; }
+        .footer { text-align: center; padding: 100px 0; color: #222; font-size: 0.8rem; letter-spacing: 3px; }
     </style>
 </head>
 <body oncontextmenu="return false;">
+
     <canvas id="bg-canvas"></canvas>
-    <div class="biz-page">
+
+    <div class="menu-btn" id="menuToggle">
+        <span></span><span></span><span></span>
+    </div>
+
+    <nav class="nav-overlay" id="navOverlay">
+        <ul class="nav-list">
+            <li><a href="#vision">PHILOSOPHY</a></li>
+            <li><a href="#profile">PROFILE</a></li>
+            <li><a href="#service">SERVICE</a></li>
+            <li><a href="#contact">CONTACT</a></li>
+            <li><a href="../index.html" style="font-size: 1rem; color: #444; margin-top: 50px;">BACK TO TOP</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
         <header>
             <h1>BUSINESS</h1>
-            <p>Studio Zen-Node Official Profile</p>
+            <p>Creative Technology Hub</p>
         </header>
 
         <section id="vision">
-            <h2>Vision & Message</h2>
+            <h2>Philosophy</h2>
             <div class="vision-box">
                 <h3>技術という翼で、<br>想像の先へ。</h3>
-                <p>Studio Zen-Nodeは、情報工学の論理と映像制作の感性を融合させるために誕生しました。最新のAI技術や高度な編集フローを駆使し、クライアント様の価値を最大化する「視覚的解決策」を構築します。</p>
-                <div style="text-align: right; font-weight: bold; color: #fff;">Studio Zen-Node 代表</div>
+                <p>Studio Zen-Nodeは、情報工学の論理と映像制作の感性を融合させるために誕生しました。最新のAI技術や高度な編集フローを駆使し、クライアント様の価値を最大化する「視覚的解決策」を構築します。圧倒的なコストパフォーマンスと、学生ならではの柔軟な発想で、次世代のクリエイティブを実現します。</p>
             </div>
         </section>
 
         <section id="profile">
-            <h2>Company Overview</h2>
+            <h2>Corporate Profile</h2>
             <table class="profile-table">
                 <tr><th>商号</th><td>Studio Zen-Node（スタジオ ゼンノード）</td></tr>
-                <tr><th>代表者</th><td>代表</td></tr>
                 <tr><th>所在地</th><td>日本 長野県</td></tr>
                 <tr><th>設立</th><td>2026年3月27日</td></tr>
-                <tr><th>事業形態</th><td>学生個人運営</td></tr>
+                <tr><th>事業内容</th><td>映像制作・ポストプロダクション・Web開発・ITソリューション支援</td></tr>
+                <tr><th>運営形態</th><td>学生個人運営（長野工業高校 情報工学科）</td></tr>
             </table>
         </section>
 
-        <div style="text-align: center; margin-top: 80px;">
-            <a href="../index.html" style="color: #444; text-decoration: none; font-size: 0.8rem;">← BACK TO HOME</a>
-        </div>
+        <section id="service">
+            <h2>Price Guide</h2>
+            <div class="price-grid">
+                <div class="price-card">
+                    <span class="plan-name">Short Movie</span>
+                    <div class="price-value">¥500<span class="price-unit">/ 1分以内</span></div>
+                    <ul class="plan-details">
+                        <li>SNS広告 / Shorts / TikTok / リール</li>
+                        <li>テロップ挿入・BGM・SE完全対応</li>
+                        <li style="color: #00ff00; font-weight: bold;">修正対応：無制限（無料）</li>
+                        <li>納期：最短 3日〜</li>
+                    </ul>
+                </div>
+
+                <div class="price-card">
+                    <span class="plan-name">Standard Edit</span>
+                    <div class="price-value">¥1,000<span class="price-unit">/ 5分以内</span></div>
+                    <ul class="plan-details">
+                        <li>YouTube動画 / 企業紹介 / インタビュー</li>
+                        <li>カラーグレーディング・高度な音響補正</li>
+                        <li style="color: #00ff00; font-weight: bold;">修正対応：無制限（無料）</li>
+                        <li>納期：通常 7日以内</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact</h2>
+            <div class="contact-selection">
+                <div class="contact-card biz-card">
+                    <h3 style="color: #fff; margin-bottom: 20px;">For Business</h3>
+                    <p style="font-size: 0.85rem; color: #777; line-height: 1.8;">法人様のご依頼・お見積り・正式な発注は、こちらのメール窓口にて承ります。</p>
+                    <a href="mailto:miyazaki.ngn@gmail.com" class="btn-action">SEND E-MAIL</a>
+                </div>
+
+                <div class="contact-card">
+                    <h3 style="color: #fff; margin-bottom: 20px;">For Personal</h3>
+                    <p style="font-size: 0.85rem; color: #777; line-height: 1.8;">個人・クリエイター様向けのご依頼は、専用サイトより受け付けております。</p>
+                    <a href="https://studio-zen-node.github.io/service.html" class="btn-action" style="background: transparent; border: 1px solid var(--accent);">VISIT SITE</a>
+                </div>
+            </div>
+        </section>
     </div>
-    <script src="./business-menu.js"></script>
+
+    <footer class="footer">
+        &copy; 2026 Studio Zen-Node | Student-Led Creative Studio
+    </footer>
+
+    <script>
+        // --- 1. 背景パーティクルアニメーション ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 70;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.init();
+            }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.size = Math.random() * 1.5;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 123, 255, 0.4)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.update();
+                p.draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = p.x - particles[j].x;
+                    const dy = p.y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 123, 255, ${0.15 - dist / 1000})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- 2. スクロールフェードイン ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+        // --- 3. メニュー制御 ---
+        const menuBtn = document.getElementById('menuToggle');
+        const navOverlay = document.getElementById('navOverlay');
+
+        menuBtn.addEventListener('click', () => {
+            const active = menuBtn.classList.toggle('active');
+            navOverlay.classList.toggle('active');
+            document.body.style.overflow = active ? 'hidden' : 'auto';
+        });
+
+        navOverlay.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                navOverlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+    </script>
 </body>
 </html>
