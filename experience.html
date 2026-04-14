@@ -1,0 +1,291 @@
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SZN Edit Experience</title>
+<style>
+:root {
+--bg-color: #000000;
+--accent-color: #007bff;
+--surface-color: #1a1a1a;
+--text-color: #ffffff;
+--gray-color: #888888;
+}
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    header {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 1px solid var(--surface-color);
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        font-weight: bold;
+        color: var(--accent-color);
+    }
+
+    #preview-container {
+        flex: 1;
+        position: relative;
+        background-color: #0a0a0a;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    #media-preview {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: filter 0.3s ease;
+    }
+
+    #watermark {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        padding: 5px 10px;
+        border: 1px solid var(--accent-color);
+        background: rgba(0, 123, 255, 0.1);
+        font-size: 0.7rem;
+        display: none;
+        pointer-events: none;
+        backdrop-filter: blur(4px);
+    }
+
+    #ui-layer {
+        background-color: var(--surface-color);
+        padding: 20px;
+        border-top: 1px solid var(--accent-color);
+        border-radius: 20px 20px 0 0;
+    }
+
+    .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        font-size: 0.7rem;
+        color: var(--gray-color);
+    }
+
+    .step-active {
+        color: var(--accent-color);
+        font-weight: bold;
+    }
+
+    .control-panel {
+        display: none;
+        min-height: 120px;
+    }
+
+    .control-panel.active {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn {
+        background: transparent;
+        border: 1px solid var(--accent-color);
+        color: var(--text-color);
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: block;
+    }
+
+    .btn:active {
+        background: var(--accent-color);
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .filter-btn {
+        background: #2a2a2a;
+        border: none;
+        color: white;
+        padding: 10px;
+        font-size: 0.7rem;
+        border-radius: 4px;
+    }
+
+    .filter-btn.selected {
+        background: var(--accent-color);
+    }
+
+    #export-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.9);
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+    }
+
+    .progress-bar {
+        width: 70%;
+        height: 2px;
+        background: #333;
+        margin-top: 20px;
+        position: relative;
+    }
+
+    .progress-fill {
+        position: absolute;
+        height: 100%;
+        background: var(--accent-color);
+        width: 0%;
+        transition: width 0.1s linear;
+    }
+
+    #file-input {
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<header>STUDIO ZEN-NODE v1.0</header>
+
+<div id="preview-container">
+<div id="placeholder-text" style="color: #444; font-size: 0.8rem;">NO MEDIA LOADED</div>
+<video id="video-preview" style="display: none;" autoplay muted loop playsinline></video>
+<img id="image-preview" style="display: none;">
+<div id="watermark">STUDIO ZEN-NODE</div>
+</div>
+
+<div id="ui-layer">
+<div class="step-indicator">
+<span id="label-step1" class="step-active">STEP 1: LOAD</span>
+<span id="label-step2">STEP 2: GRADE</span>
+<span id="label-step3">STEP 3: OVERLAY</span>
+</div>
+
+<div id="step1" class="control-panel active">
+    <label for="file-input" class="btn">ライブラリから素材を選択</label>
+    <input type="file" id="file-input" accept="video/*,image/*">
+</div>
+
+<div id="step2" class="control-panel">
+    <div class="filter-grid">
+        <button class="filter-btn selected" onclick="applyFilter('none', this)">NORMAL</button>
+        <button class="filter-btn" onclick="applyFilter('grayscale(100%)', this)">MONO</button>
+        <button class="filter-btn" onclick="applyFilter('sepia(80%)', this)">SEPIA</button>
+        <button class="filter-btn" onclick="applyFilter('contrast(150%) brightness(80%)', this)">CYBER</button>
+        <button class="filter-btn" onclick="applyFilter('hue-rotate(180deg)', this)">INVERT</button>
+        <button class="filter-btn" onclick="applyFilter('saturate(200%)', this)">VIVID</button>
+    </div>
+    <button class="btn" onclick="nextStep(3)" style="margin-top: 10px;">次へ</button>
+</div>
+
+<div id="step3" class="control-panel">
+    <button class="btn" onclick="toggleWatermark()">ロゴの表示/非表示</button>
+    <button class="btn" onclick="startExport()" style="margin-top: 10px; border-color: #fff;">書き出し開始</button>
+</div>
+</div>
+
+<div id="export-overlay">
+<div id="export-status" style="font-size: 0.8rem; letter-spacing: 3px;">EXPORTING...</div>
+<div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+<div id="percent-display" style="margin-top: 10px; font-size: 0.7rem; color: var(--accent-color);">0%</div>
+</div>
+
+<script>
+const fileInput = document.getElementById('file-input');
+const videoPreview = document.getElementById('video-preview');
+const imagePreview = document.getElementById('image-preview');
+const placeholder = document.getElementById('placeholder-text');
+const watermark = document.getElementById('watermark');
+let currentMedia = null;
+
+fileInput.addEventListener(&#39;change&#39;, function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    placeholder.style.display = &#39;none&#39;;
+
+    if (file.type.startsWith(&#39;video/&#39;)) {
+        imagePreview.style.display = &#39;none&#39;;
+        videoPreview.src = url;
+        videoPreview.style.display = &#39;block&#39;;
+        currentMedia = videoPreview;
+    } else {
+        videoPreview.style.display = &#39;none&#39;;
+        imagePreview.src = url;
+        imagePreview.style.display = &#39;block&#39;;
+        currentMedia = imagePreview;
+    }
+
+    nextStep(2);
+});
+
+function nextStep(step) {
+    document.querySelectorAll(&#39;.control-panel&#39;).forEach(p =&gt; p.classList.remove(&#39;active&#39;));
+    document.getElementById(&#39;step&#39; + step).classList.add(&#39;active&#39;);
+    
+    document.querySelectorAll(&#39;.step-indicator span&#39;).forEach(s =&gt; s.classList.remove(&#39;step-active&#39;));
+    document.getElementById(&#39;label-step&#39; + step).classList.add(&#39;step-active&#39;);
+}
+
+function applyFilter(filterValue, btn) {
+    if (currentMedia) {
+        currentMedia.style.filter = filterValue;
+    }
+    document.querySelectorAll(&#39;.filter-btn&#39;).forEach(b =&gt; b.classList.remove(&#39;selected&#39;));
+    btn.classList.add(&#39;selected&#39;);
+}
+
+function toggleWatermark() {
+    const isVisible = watermark.style.display === &#39;block&#39;;
+    watermark.style.display = isVisible ? &#39;none&#39; : &#39;block&#39;;
+}
+
+function startExport() {
+    const overlay = document.getElementById(&#39;export-overlay&#39;);
+    const fill = document.getElementById(&#39;progress-fill&#39;);
+    const percentText = document.getElementById(&#39;percent-display&#39;);
+    overlay.style.display = &#39;flex&#39;;
+
+    let progress = 0;
+    const interval = setInterval(() =&gt; {
+        progress += Math.random() * 5;
+        if (progress &gt;= 100) {
+            progress = 100;
+            clearInterval(interval);
+            setTimeout(() =&gt; {
+                window.location.href = &#39;works.html&#39;;
+            }, 800);
+        }
+        fill.style.width = progress + &#39;%&#39;;
+        percentText.innerText = Math.floor(progress) + &#39;%&#39;;
+    }, 100);
+}
+</script>
+
+</body>
+</html>
