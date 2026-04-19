@@ -28,21 +28,7 @@ const navHTML = `
 
 document.body.insertAdjacentHTML('afterbegin', navHTML);
 
-// 2. セキュリティとUXのバランス
 
-
-// 3. ショートカット制限（必要最小限に留める）
-document.addEventListener('keydown', function(e) {
-const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
-const ctrlKey = isMac ? e.metaKey : e.ctrlKey;
-
-// 保存 (Ctrl/Cmd + S) のみ、誤操作による保存ダイアログ防止として残す場合
-if (ctrlKey && e.key === 's') {
-    e.preventDefault();
-}
-
-// F12やソース表示の禁止は、開発者には通用せず一般ユーザーを混乱させるため、削除を推奨します。
-}, false);
 
 });
 
