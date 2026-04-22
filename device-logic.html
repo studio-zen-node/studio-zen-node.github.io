@@ -3,84 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Why Windows? | Studio Zen-Node</title>
+    <title>Windows vs iPad | Studio Zen-Node</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .column-content {
-            line-height: 1.8;
-            color: #ccc;
+        /* アニメーション設定 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .highlight-blue {
+
+        .animate {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        .column-content { line-height: 1.8; color: #ccc; }
+        
+        /* カードのデザインをブラッシュアップ */
+        .comparison-box {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border: 1px solid #333;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-card {
+            border-left: 5px solid #007bff;
+            padding-left: 20px;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, rgba(0,123,255,0.05) 0%, transparent 100%);
+        }
+
+        .status-card h3 {
+            color: #fff;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-card h3::before {
+            content: '▶';
+            color: #007bff;
+            font-size: 0.8rem;
+            margin-right: 10px;
+        }
+
+        .highlight-text {
             color: #007bff;
             font-weight: bold;
+            border-bottom: 1px dashed #007bff;
         }
-        .comparison-box {
-            background: #111;
-            padding: 25px;
-            border-radius: 12px;
-            margin: 2rem 0;
-            border: 1px solid #222;
-        }
-        .comparison-box h3 {
-            color: #fff;
-            border-bottom: 2px solid #007bff;
+
+        /* ふりがなのスタイル */
+        rt { font-size: 0.6rem; color: #888; }
+
+        .back-home {
             display: inline-block;
-            margin-bottom: 1.5rem;
-        }
-        .example-card {
-            margin-bottom: 2rem;
-        }
-        .example-card h4 {
-            color: #fff;
-            margin-bottom: 0.5rem;
-        }
-        .back-link {
-            display: block;
-            margin-top: 3rem;
-            color: #888;
+            margin-top: 2rem;
+            color: #007bff;
             text-decoration: none;
+            font-weight: bold;
+            border: 1px solid #007bff;
+            padding: 10px 25px;
+            border-radius: 50px;
             transition: 0.3s;
         }
-        .back-link:hover {
-            color: #007bff;
+        .back-home:hover {
+            background: #007bff;
+            color: #fff;
         }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <script src="menu.js"></script>
 
     <div class="container">
-        <header style="padding: 4rem 0 2rem 0;">
-            <h1 style="color:#007bff; font-weight:900; letter-spacing: 2px;">Why Windows?</h1>
-            <p style="color:#666;">なぜ、iPadだけでなくWindowsが必要なのか</p>
+        <header style="padding: 6rem 0 3rem 0; text-align: center;">
+            <h1 class="animate" style="color:#007bff; font-weight:900; letter-spacing: 2px;">Device Spec Logic</h1>
+            <p class="animate delay-1" style="color:#666;">
+                <ruby>最強<rt>さいきょう</rt></ruby>のデバイス<ruby>選定<rt>せんてい</rt></ruby>：なぜWindowsが必要なのか
+            </p>
         </header>
 
-        <article class="card column-content">
-            <p>最近では「iPadがあればパソコンはいらない」と言われることもあります。しかし、Studio Zen-NodeがハイエンドなWindowsマシンを使い続けるのには、明確な理由があります。</p>
+        <article class="card column-content animate delay-2">
+            <p>
+                「iPadがあればパソコンはいらない」そう<ruby>思<rt>おも</rt></ruby>っていませんか？<br>
+                Studio Zen-NodeがハイエンドなWindowsを使うのは、<span class="highlight-text">「かっこいいから」だけではありません。</span>
+            </p>
 
             <div class="comparison-box">
-                <div class="example-card">
-                    <h4>1. 「消費」のiPad、「構築」のWindows</h4>
-                    <p>iPadは、動画を見たり、絵を描いたりといった「直感的な作業」に世界一向いています。対してWindowsは、システムそのものを作ったり、数万個の計算を同時に行ったりする<span class="highlight-blue">「重厚な構築」</span>に向いています。</p>
+                <div class="status-card animate delay-3">
+                    <h3>「<ruby>消費<rt>しょうひ</rt></ruby>」と「<ruby>構築<rt>こうちく</rt></ruby>」</h3>
+                    <p>
+                        iPadは、<ruby>動画<rt>どうが</rt></ruby>を見たり絵を描いたりする「<ruby>直感的<rt>ちょっかんてき</rt></ruby>な作業」の<ruby>天才<rt>てんさい</rt></ruby>です。
+                        でも、Windowsは新しいソフトやシステムをゼロから作り上げる<span class="highlight-text">「巨大な工場」</span>のような役割を持っています。
+                    </p>
                 </div>
 
-                <div class="example-card">
-                    <h4>2. 限界を突破するパワー</h4>
-                    <p>例えば、4K動画の編集。iPadでも可能ですが、何百ものカットを重ね、複雑なエフェクトを加えると動作が重くなります。専用のビデオカード（RTXシリーズなど）を積んだWindowsは、その限界を軽々と突破します。</p>
+                <div class="status-card animate delay-3" style="animation-delay: 0.8s;">
+                    <h3><ruby>限界<rt>げんかい</rt></ruby>を突破する「パワー」</h3>
+                    <p>
+                        4Kの<ruby>重<rt>おも</rt></ruby>い動画を書き出すとき、iPadだと時間がかかって熱くなります。
+                        RTXという<ruby>強力<rt>きょうりょく</rt></ruby>なパーツを積んだWindowsなら、数倍のスピードで<ruby>完了<rt>かんりょう</rt></ruby>し、<ruby>快適<rt>かいてき</rt></ruby>に次の制作へ進めます。
+                    </p>
                 </div>
 
-                <div class="example-card">
-                    <h4>3. ファイル管理の自由度</h4>
-                    <p>プログラミングにおいて、ファイルの中身を自由に入れ替えたり、ネットワークを細かく設定したりする作業は、iPadの「守られた環境」では難しいことがあります。Windowsの<span class="highlight-blue">「自由さ」</span>こそが、エンジニアとしての成長を支えてくれます。</p>
+                <div class="status-card animate delay-3" style="animation-delay: 1s;">
+                    <h3><ruby>自由<rt>じゆう</rt></ruby>な「システム管理」</h3>
+                    <p>
+                        <ruby>情報工学<rt>じょうほうこうがく</rt></ruby>の世界では、パソコンの深い部分を触ることがあります。
+                        iPadの「<ruby>守<rt>まも</rt></ruby>られた環境」から飛び出し、自由に設定をカスタマイズできるのがWindowsの<ruby>魅力<rt>みりょく</rt></ruby>です。
+                    </p>
                 </div>
             </div>
 
-            <p style="text-align: center; margin-top: 2rem;">
-                <strong>結論：どちらが上かではなく、用途に合わせた「最強の使い分け」が重要。</strong>
+            <p style="text-align: center; margin-top: 2rem;" class="animate" style="animation-delay: 1.2s;">
+                <strong>結論：iPadで<ruby>閃<rt>ひらめ</rt></ruby>き、Windowsで形にする。</strong><br>
+                これがStudio Zen-Nodeのクリエイティブ・スタイルです。
             </p>
 
-            <a href="index.html" class="back-link">← Back to Home</a>
+            <div style="text-align: center;">
+                <a href="index.html" class="back-home animate" style="animation-delay: 1.4s;">← Homeへ戻る</a>
+            </div>
         </article>
     </div>
 
@@ -88,5 +140,10 @@
         &copy; 2026 Studio Zen-Node | All Rights Reserved.
     </div>
 
+    <script>
+        // セキュリティ設定
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
+    </script>
 </body>
 </html>
