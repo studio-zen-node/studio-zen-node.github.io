@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-
+ 
     // 1. ナビゲーションメニューの生成
     const navHTML = `
     <nav class="nav-container" aria-label="メインナビゲーション">
