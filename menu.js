@@ -8,19 +8,19 @@ document.addEventListener('DOMContentLoaded', function() {
         <label for="menu-btn-check" class="menu-btn"><span></span></label>
         <div class="menu-content">
             <ul>
-                <li><a href="/index.html">Home<span>トップページ</span></a></li>
-                <li><a href="/works.html">Works<span>制作実績</span></a></li>
-                <li><a href="/blog.html">Blog<span>技術・制作ログ</span></a></li>
-                <li><a href="/device-logic.html">Column<span>Windows vs iPad</span></a></li>
-                <li><a href="experience.html" class="btn">体験ページへ</a></li>
-                <li><a href="/service.html">Service<span>ご依頼・料金</span></a></li>
-                <li><a href="/env.html">Environment<span>制作環境</span></a></li>
-                <li><a href="/terms.html">Terms<span>利用規約</span></a></li>
-                <li><a href="/legal.html">Legal<span>特定商取引法</span></a></li>
-                <li><a href="/business/index.html">Business<span>企業様へ (JP)</span></a></li>
-                <li><a href="/business/en/index.html">Business<span>Corporate (EN)</span></a></li>
-                <li><a href="/recruit/index.html">Recruit<span>採用情報</span></a></li>
-                <li><a href="payment.html">Payment<span>お支払い方法</span></a></li>
+                <li><a href="/index">Home<span>トップページ</span></a></li>
+                <li><a href="/works">Works<span>制作実績</span></a></li>
+                <li><a href="/blog">Blog<span>技術・制作ログ</span></a></li>
+                <li><a href="/device-logic">Column<span>Windows vs iPad</span></a></li>
+                <li><a href="experience" class="btn">体験ページへ</a></li>
+                <li><a href="/service">Service<span>ご依頼・料金</span></a></li>
+                <li><a href="/env">Environment<span>制作環境</span></a></li>
+                <li><a href="/terms">Terms<span>利用規約</span></a></li>
+                <li><a href="/legal">Legal<span>特定商取引法</span></a></li>
+                <li><a href="/business/index">Business<span>企業様へ (JP)</span></a></li>
+                <li><a href="/business/en/index">Business<span>Corporate (EN)</span></a></li>
+                <li><a href="/recruit/index">Recruit<span>採用情報</span></a></li>
+                <li><a href="payment">Payment<span>お支払い方法</span></a></li>
             </ul>
         </div>
     </nav>
