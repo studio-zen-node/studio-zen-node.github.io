@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <li><a href="/works">Works<span>制作実績</span></a></li>
                 <li><a href="/blog">Blog<span>技術・制作ログ</span></a></li>
                 <li><a href="/device-logic">Column<span>Windows vs iPad</span></a></li>
-                /*<li><a href="experience" class="btn">体験ページへ</a></li>*/
+                //<li><a href="experience" class="btn">体験ページへ</a></li>
                 <li><a href="/service">Service<span>ご依頼・料金</span></a></li>
                 <li><a href="/env">Environment<span>制作環境</span></a></li>
                 <li><a href="/terms">Terms<span>利用規約</span></a></li>
